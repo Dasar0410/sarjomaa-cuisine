@@ -1,7 +1,7 @@
 import NavigationBar from "@/components/NavigationBar";
-import { getTags, addTag } from "@/api/tag";
+import { getTags } from "@/api/tag";
 import { useState, useEffect } from "react";
-import { Tag } from "@/types/tag";
+import { Tag } from "@/types/recipe";
 
 function AddTag() {
 
