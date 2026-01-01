@@ -1,3 +1,9 @@
+export interface Tag {
+  id: number
+  name: string
+  slug_text: string
+}
+
 export interface Recipe {
     id?: number
     title: string
@@ -5,9 +11,14 @@ export interface Recipe {
     ingredients: Ingredient[]
     steps: Step[]
     cuisine: string
+    meal_type: string
+    spice_level: string
+    cook_time: string
+    servings: number
     created_at: string
     image_url: string
-    creator: number
+    creator: string
+    tags?: Tag[]
   }
 
   export interface Step{

@@ -6,6 +6,7 @@ import AllRecipes from './pages/AllRecipes'
 import AddRecipe from './pages/AddRecipe'
 import Signup from './pages/Signup'
 import Signin from './pages/Signin'
+import AddTag from './pages/AddTag'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
       <Route path="/recipes/:id" element={<RecipePage />} />
       <Route path='/recipes' element={<AllRecipes />} />
       <Route path='/add-recipe' element={<AddRecipe />} />
+      <Route path='/add-tag' element={<AddTag />} />
       </Routes>
     </>
   )
