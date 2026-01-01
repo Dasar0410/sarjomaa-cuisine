@@ -12,8 +12,12 @@ function Home() {
     // const searchterm functionality tba
 
     const fetchRecipes = async () => {
-        const data = await api.getRecipeCard(4);
-        setRecipes(data);
+        const data = await api.getRecipes();
+        // This is a horrible solution, replace with a proper query that sorts by created_at
+        const sortedRecipes = data.sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setRecipes(sortedRecipes.slice(0, 4));
     };
 
     useEffect(() => {

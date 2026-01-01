@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Trash2, Plus } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
-import { Recipe, Ingredient } from '../types/recipe';
+import { Recipe, Ingredient, Tag } from '../types/recipe';
 import { addRecipe } from '../api/api';
+import { getTags } from '@/api/tag';
 import imageCompression from "browser-image-compression";
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
+import { UserAuth } from '@/context/AuthContext';
 import {
   Form,
   FormControl,
@@ -42,6 +44,19 @@ const recipeFormSchema = z.object({
 type RecipeFormValues = z.infer<typeof recipeFormSchema>;
 
 function NewRecipe() {
+      const { session } = UserAuth();
+      const [tagIds, setTagIds] = useState<number[]>([]);
+      const [tags, setTags] = useState<Tag[]>([]);
+  
+      const fetchTags = async () => {
+          const data = await getTags();
+          setTags(data);
+      };
+  
+      useEffect(() => {
+          fetchTags();
+      }, []);
+
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [steps, setSteps] = useState<Array<{ instruction: string; stepNumber: number }>>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -126,7 +141,6 @@ function NewRecipe() {
 
     try {
       const compressedImage = await compressRecipeImage(values.image);
-
       const recipe: Recipe = {
         title: values.title,
         description: values.description,
@@ -138,11 +152,11 @@ function NewRecipe() {
         ingredients: ingredients,
         steps: steps,
         created_at: new Date().toISOString(),
-        creator: 1,
+        creator: session!.user.id,
         image_url: "",
       };
 
-      await addRecipe(recipe, compressedImage);
+      await addRecipe(recipe, compressedImage, tagIds);
 
       // Reset form
       form.reset();
@@ -161,7 +175,7 @@ function NewRecipe() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="">
       <NavigationBar />
       <div className="container max-w-4xl mx-auto py-8 px-4">
         <Card>
@@ -277,7 +291,7 @@ function NewRecipe() {
                         <SelectContent>
                           <SelectItem value="mild">Mild</SelectItem>
                           <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="hot">Hot</SelectItem>
+                          <SelectItem value="spicy">Spicy</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -313,12 +327,39 @@ function NewRecipe() {
                           min={1}
                           placeholder="Number of servings"
                           {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/* Tags Section */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none">Tags</label>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <Button
+                        key={tag.id}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          // Toggle tag selection
+                          if (tagIds.includes(tag.id)) {
+                            setTagIds(tagIds.filter(id => id !== tag.id));
+                          } else {
+                            setTagIds([...tagIds, tag.id]);
+                          }
+                        }}
+                        className={tagIds.includes(tag.id) ? "bg-primary text-primary-foreground" : ""}
+                      >
+                        {tag.slug_text}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
 
                 {/* Ingredients Section */}
                 <div className="space-y-4">
