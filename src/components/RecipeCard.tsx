@@ -29,9 +29,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
             {getSpiceLevel(recipe.spice_level)}
           </span>
         </div>
-        <p className="text-brand-foreground/70 text-xs md:text-sm leading-relaxed mb-3 md:mb-4 flex-grow">
-          {recipe.description}
-        </p>
+
         {recipe.tags && recipe.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {recipe.tags.map(tag => (
