@@ -3,14 +3,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Trash2, Plus } from 'lucide-react';
-import NavigationBar from '../components/NavigationBar';
-import { Recipe, Ingredient, Tag } from '../types/recipe';
-import { addRecipe } from '../api/api';
+import NavigationBar from '../../components/NavigationBar';
+import { Recipe, Ingredient, Tag } from '../../types/recipe';
+import { addRecipe } from '../../api/api';
 import { getTags } from '@/api/tag';
 import imageCompression from "browser-image-compression";
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Textarea } from '../../components/ui/textarea';
 import { UserAuth } from '@/context/AuthContext';
 import {
   Form,
@@ -20,15 +20,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../components/ui/form';
+} from '../../components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+} from '../../components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 
 const recipeFormSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title must be less than 100 characters'),

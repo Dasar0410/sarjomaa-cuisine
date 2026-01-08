@@ -3,10 +3,11 @@ import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import RecipePage from './pages/RecipePages'
 import AllRecipes from './pages/AllRecipes'
-import AddRecipe from './pages/AddRecipe'
+import AddRecipe from './pages/adminPages/AddRecipe'
 import Signup from './pages/Signup'
 import Signin from './pages/Signin'
-import AddTag from './pages/AddTag'
+import AddTag from './pages/adminPages/AddTag'
+import AdminHome from './pages/adminPages/AdminHome'
 
 function App() {
 
@@ -19,8 +20,10 @@ function App() {
       <Route path="/signin" element={<Signin />} />
       <Route path="/recipes/:id" element={<RecipePage />} />
       <Route path='/recipes' element={<AllRecipes />} />
-      <Route path='/add-recipe' element={<AddRecipe />} />
-      <Route path='/add-tag' element={<AddTag />} />
+      <Route path='/admin/add-recipe' element={<AddRecipe />} />
+      <Route path='/admin/add-tag' element={<AddTag />} />
+      <Route path='/admin' element={<AdminHome />} />
+      
       </Routes>
     </>
   )
