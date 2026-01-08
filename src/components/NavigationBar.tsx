@@ -48,7 +48,7 @@ function NavigationBar() {
                 Oppskrifter
               </button>
             </li>
-            {isAdmin && (
+            {!isAdmin && (
               <li>
                 <button
                   onClick={() => navigate("/admin/")}
