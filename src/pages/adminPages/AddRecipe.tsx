@@ -8,7 +8,6 @@ import RecipeForm from './RecipeForm';
 
 function NewRecipe() {
   const { session } = UserAuth();
-  session?.user.id;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function compressRecipeImage(file: File): Promise<File> {

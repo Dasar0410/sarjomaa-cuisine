@@ -87,7 +87,7 @@ export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[
 }
   
 
-export async function updateRecipeDB(recipe: Recipe, id: number) {
+export async function updateRecipe(recipe: Recipe, id: number) {
   const {error } = await supabase
     .from('recipes')
     .update(recipe) // Update the recipe with the new data 
@@ -100,7 +100,7 @@ export async function updateRecipeDB(recipe: Recipe, id: number) {
   }
 }
 
-export async function deleteRecipeDB(id: number) {
+export async function deleteRecipe(id: number) {
   const {error} = await supabase
   .from('recipes')
   .delete()

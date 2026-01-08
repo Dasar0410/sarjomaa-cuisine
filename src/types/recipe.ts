@@ -13,7 +13,7 @@ export interface Recipe {
     cuisine: string
     meal_type: string
     spice_level: string
-    cook_time: string
+    cook_time: number
     servings: number
     created_at: string
     image_url: string

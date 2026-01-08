@@ -32,7 +32,7 @@ const recipeFormSchema = z.object({
   cuisine: z.string().min(1, 'Please select a cuisine'),
   meal_type: z.string().min(1, 'Please select a meal type'),
   spice_level: z.string().min(1, 'Please select a spice level'),
-  cook_time: z.string().min(1, 'Please enter the cook time'),
+  cook_time: z.number().min(1, 'Please enter the cook time'),
   servings: z.number().min(1, 'Please enter the number of servings'),
   image: z.instanceof(File, { message: 'Please select an image for the recipe' }).optional(),
 });
@@ -86,7 +86,7 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
       cuisine: initialData?.cuisine || "",
       meal_type: initialData?.meal_type || "",
       spice_level: initialData?.spice_level || "",
-      cook_time: initialData?.cook_time || "",
+      cook_time: initialData?.cook_time || 1,
       servings: initialData?.servings || 1,
       image: undefined,
     },
@@ -264,9 +264,15 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
               name="cook_time"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cook Time</FormLabel>
+                  <FormLabel>Cook Time (minutes)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 30 minutes" {...field} />
+                    <Input
+                      placeholder="30"
+                      type='number'
+                      min={1}
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
