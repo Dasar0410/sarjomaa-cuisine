@@ -1,28 +1,23 @@
-import { Recipe } from '../types/recipe';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar'
 import FilterSearch from '../components/FilterSearch';
-import { getRecipes, searchRecipes } from '../api/api';
+import { searchRecipes } from '../api/api';
+import { useQuery } from '@tanstack/react-query';
 
 function AllRecipes() {
-    const [recipes, setRecipes] = useState<Recipe[]>([]); // set initial state to empty array
-    // const searchterm functionality tba
+    const [searchTerm, setSearchTerm] = useState<string>('');
+
+    const { data: recipes = [] } = useQuery({
+        queryKey: ['recipes', searchTerm],
+        queryFn: () => searchRecipes(searchTerm),
+    });
 
     const onSearchChange = (term: string) => {
-        searchRecipes(term).then((data) => {
-            setRecipes(data);
-        });
+        setSearchTerm(term);
     };
 
-    useEffect(() => {
-        const fetchRecipes = async () => {
-            const data = await getRecipes();
-            setRecipes(data); 
-        }
-        fetchRecipes();
-    },[]);  
     return (
         <div> 
             <NavigationBar />
