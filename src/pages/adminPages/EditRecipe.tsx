@@ -7,25 +7,18 @@ import { UserAuth } from '@/context/AuthContext';
 import RecipeForm from './RecipeForm';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
 
 function EditRecipe() {
   const { session } = UserAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { id } = useParams<{ id: string }>();
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchRecipe() {
-      if (id) {
-        const fetchedRecipe = await getRecipeById(parseInt(id));
-        if (fetchedRecipe) {
-          setRecipe(fetchedRecipe);
-        }
-      }
-    }
-    fetchRecipe();
-  }, [id]);
+  const { data: recipeData} = useQuery({
+    queryKey: ['recipe', id],
+    queryFn: () => getRecipeById(Number(id)),
+})
 
   async function compressRecipeImage(file: File): Promise<File> {
     const options = {
@@ -57,13 +50,13 @@ function EditRecipe() {
         throw new Error("Recipe ID is missing");
       }
 
-      let imageUrl = recipe?.image_url || "";
+      let imageUrl = recipeData?.image_url || "";
 
       // If a new image was uploaded, compress and upload it
       if (values.image) {
         // Delete the old image if it exists
-        if (recipe?.image_url) {
-          const urlParts = recipe.image_url.split('/recipe-images/');
+        if (recipeData?.image_url) {
+          const urlParts = recipeData.image_url.split('/recipe-images/');
           const oldImagePath = urlParts[1];
           
           if (oldImagePath) {
@@ -91,7 +84,7 @@ function EditRecipe() {
       }
 
       const updatedRecipe: Recipe = {
-        ...recipe,
+        ...recipeData,
         title: values.title,
         description: values.description,
         cuisine: values.cuisine,
@@ -102,8 +95,8 @@ function EditRecipe() {
         ingredients: ingredients,
         steps: steps,
         image_url: imageUrl,
-        created_at: recipe?.created_at || new Date().toISOString(),
-        creator: recipe?.creator || session.user.id,
+        created_at: recipeData?.created_at || new Date().toISOString(),
+        creator: recipeData?.creator || session.user.id,
       };
 
       await updateRecipe(updatedRecipe, parseInt(id));
@@ -141,7 +134,7 @@ function EditRecipe() {
     }
   }
 
-  if (!recipe) {
+  if (!recipeData) {
     return (
       <>
         <NavigationBar />
@@ -160,7 +153,7 @@ function EditRecipe() {
           mode="edit"
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
-          initialData={recipe}
+          initialData={recipeData}
         />
       </div>
     </>
