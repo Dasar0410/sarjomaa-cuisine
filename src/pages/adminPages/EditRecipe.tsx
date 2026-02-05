@@ -61,6 +61,23 @@ function EditRecipe() {
 
       // If a new image was uploaded, compress and upload it
       if (values.image) {
+        // Delete the old image if it exists
+        if (recipe?.image_url) {
+          const urlParts = recipe.image_url.split('/recipe-images/');
+          const oldImagePath = urlParts[1];
+          
+          if (oldImagePath) {
+            const { error: deleteError } = await supabase.storage
+              .from('recipe-images')
+              .remove([oldImagePath]);
+            
+            if (deleteError) {
+              console.error('Error deleting old image:', deleteError);
+            }
+          }
+        }
+
+        // Upload the new image
         const compressedImage = await compressRecipeImage(values.image);
         const { data, error: storageError } = await supabase.storage
           .from('recipe-images')

@@ -1,29 +1,25 @@
-import { useEffect, useState } from 'react';
 import NavigationBar from '../components/NavigationBar';
 import RecipeCard from '../components/RecipeCard';
-import { Recipe } from '../types/recipe';
 import LandingPage from '../components/LandingPage';
 import { Link, useNavigate } from 'react-router-dom';
 import * as api from '../api/api';
 import { Button } from '../components/ui/button';
+import {
+    useQuery
+  } from '@tanstack/react-query'
+
 
 function Home() {
-    const [recipes, setRecipes] = useState<Recipe[]>([]);
     const navigate = useNavigate();
-    // const searchterm functionality tba
+    const { data} = useQuery({
+        queryKey: ['recipes'],
+        queryFn: api.getRecipes,
+    });
 
-    const fetchRecipes = async () => {
-        const data = await api.getRecipes();
-        // This is a horrible solution, replace with a proper query that sorts by created_at
-        const sortedRecipes = data.sort((a, b) => 
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-        setRecipes(sortedRecipes.slice(0, 4));
-    };
-
-    useEffect(() => {
-        fetchRecipes();
-    }, []);
+    // Get only the 4 newest recipes sorted by created_at
+    const displayRecipes = data
+        ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 4) || [];
 
     return (
         <div className='leading-none'>
@@ -35,7 +31,7 @@ function Home() {
             <div className='justify-center' id='recipes'>
                 <div className=' md:text-secondary-foreground p-4 md:p-8 pt-12'>
                 <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8'>
-                {recipes.map((recipe) => (
+                {displayRecipes.map((recipe) => (
                     <Link 
                     key={recipe.id} 
                     to={`/recipes/${recipe.id}`} 
