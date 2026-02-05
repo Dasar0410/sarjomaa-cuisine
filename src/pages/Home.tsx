@@ -45,12 +45,15 @@ function Home() {
                 </div>
                 
                 {/* Se alle oppskrifter button */}
-                <div className="mt-12 mb-6">
+                <div className="mt-12 mb-16">
                     <Button 
                         variant="secondary" 
                         size="lg" 
-                        className="md:text-2xl text-lg px-10 py-6 bg-brand-primary-foreground text-brand-primary hover:bg-brand-background transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                        onClick={() => navigate('/recipes')}
+                        className="text-lg px-10 py-6 bg-brand-primary-foreground text-brand-primary hover:bg-brand-background transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                        onClick={() => {
+                            navigate('/recipes');
+                            window.scrollTo({ top: 0 });
+                        }}
                     >
                         Se alle oppskrifter →
                     </Button>
