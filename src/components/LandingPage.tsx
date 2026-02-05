@@ -7,8 +7,8 @@ function LandingPage() {
     const {session} = UserAuth()
     const name = session?.user?.user_metadata?.display_name || "Gjest"
   return (
-    <section className= "min-h-screen text-white flex-left bg-brand-background cursor-default  ">
-        <div className="max-w-7xl mx-auto px-4 pt-10 lg:pt-44 flex flex-col lg:flex-row items-center">
+    <section className= "relative min-h-screen text-white flex flex-col bg-brand-background cursor-default">
+        <div className="flex-1 max-w-7xl mx-auto px-4 pt-10 lg:pt-32 flex flex-col lg:flex-row items-center">
 
             {/* Left side: text */}
             <div className="w-full lg:w-1/2 space-y-6 lg:text-start text-center">
@@ -26,8 +26,25 @@ function LandingPage() {
                 </a>
 
             </div>
-            <div className="md:w-1/2 flex items-center justify-center relative mt-8 md:mt-0">
+            <div className="md:w-1/2 flex items-center justify-center relative mt-8 md:mt-0 2xl:w-1/2">
             <img src={landingImage} alt="Cooking illustration" className="w-full h-auto" />
+            
+            </div>
+         </div>
+
+         {/* Pixel Art Transition */}
+         <div className="w-full h-32 overflow-hidden mt-8 lg:mt-0">
+            {/* Smooth pixelated gradient using brand colors */}
+            <div className="flex flex-col w-full h-full">
+                {/* Vertical gradient bars - only separated vertically */}
+                <div className="flex-1 bg-brand-background/40" style={{imageRendering: 'pixelated'}} />
+                <div className="flex-1 bg-brand-background/50" style={{imageRendering: 'pixelated'}} />
+                <div className="flex-1 bg-brand-secondary/40" style={{imageRendering: 'pixelated'}} />
+                <div className="flex-1 bg-brand-secondary/50" style={{imageRendering: 'pixelated'}} />
+                <div className="flex-1 bg-brand-secondary/60" style={{imageRendering: 'pixelated'}} />
+                <div className="flex-1 bg-brand-primary/50" style={{imageRendering: 'pixelated'}} />
+                <div className="flex-1 bg-brand-primary/70" style={{imageRendering: 'pixelated'}} />
+                <div className="flex-1 bg-brand-primary" style={{imageRendering: 'pixelated'}} />
             </div>
          </div>
 </section>
