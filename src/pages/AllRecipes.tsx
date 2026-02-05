@@ -27,7 +27,7 @@ function AllRecipes() {
         <div> 
             <NavigationBar />
             <FilterSearch onSearchChange={onSearchChange} />
-            <div className='card-container columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6 px-4 py-4 space-y-4'>
+            <div className='card-container columns-2 sm:columns-2 md:columns-3 lg:columns-3 xl:columns-4 2xl:columns-5  gap-4 md:gap-6 px-4 py-4 space-y-4'>
             {recipes.map((recipe) => (
                 <Link 
                 key={recipe.id} 
