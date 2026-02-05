@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Recipe } from '../types/recipe'
 import NavigationBar from '../components/NavigationBar'
 import TitleInstructionCards from '../components/TitleInstructionCard'
 import IngredientsCard from '../components/IngredientsCard'
