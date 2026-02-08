@@ -8,12 +8,16 @@ import RecipeForm from './RecipeForm';
 import { useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '../../components/ui/button';
+
+import { useDeleteRecipe } from '../../hooks/useDeleteRecipe'
 
 function EditRecipe() {
   const { session } = UserAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { handleDelete, isDeleting } = useDeleteRecipe();
 
   const { data: recipeData} = useQuery({
     queryKey: ['recipe', id],
@@ -149,6 +153,19 @@ function EditRecipe() {
     <>
       <NavigationBar />
       <div className="container max-w-4xl mx-auto py-8 px-4">
+                    {/* Delete button - only show for authenticated users */}
+                    {session && recipeData && (
+                <div className='flex justify-center mt-6 mb-2'>
+                    <Button 
+                        variant="destructive" 
+                        onClick={() => handleDelete(recipeData, Number(id))}
+                        disabled={isDeleting}
+                        className="mx-4"
+                    >
+                        {isDeleting ? 'Sletter...' : 'Slett oppskrift'}
+                    </Button>
+                </div>
+            )}
         <RecipeForm
           mode="edit"
           onSubmit={handleSubmit}
