@@ -4,8 +4,9 @@ import TitleInstructionCards from '../components/TitleInstructionCard'
 import IngredientsCard from '../components/IngredientsCard'
 import { getRecipeById } from '../api/api'
 import { useQuery } from '@tanstack/react-query'
+
 function RecipePages() {
-    const {id} = useParams<{ id: string}>() // recipes/:id
+    const {id} = useParams<{ id: string}>()
 
     const { data: recipeData} = useQuery({
         queryKey: ['recipe', id],
