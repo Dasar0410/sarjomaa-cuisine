@@ -8,6 +8,7 @@ import { getTags } from '@/api/tag';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
+import { ImageCropper } from '../../components/ImageCropper';
 import {
   Form,
   FormControl,
@@ -54,6 +55,10 @@ interface RecipeFormProps {
 export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: RecipeFormProps) {
   const [tagIds, setTagIds] = useState<number[]>(initialData?.tags?.map(tag => tag.id) || []);
   const [tags, setTags] = useState<Tag[]>([]);
+  
+  // Image cropping state
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
 
   const fetchTags = async () => {
     const data = await getTags();
@@ -445,7 +450,10 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          onChange(file);
+                          // Create object URL for cropping
+                          const url = URL.createObjectURL(file);
+                          setImageSrc(url);
+                          setShowCropper(true);
                         }
                       }}
                       {...field}
@@ -453,8 +461,8 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                   </FormControl>
                   <FormDescription>
                     {mode === 'edit' 
-                      ? 'Upload a new image to replace the current one (optional, max 1MB, will be compressed)'
-                      : 'Upload an image of your dish (max 1MB, will be compressed)'}
+                      ? 'Upload a new image to replace the current one (will be cropped to 4:3 ratio)'
+                      : 'Upload an image of your dish (will be cropped to 4:3 ratio)'}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -470,6 +478,27 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
           </form>
         </Form>
       </CardContent>
+      
+      {/* Image Cropper Modal */}
+      {showCropper && imageSrc && (
+        <ImageCropper
+          imageSrc={imageSrc}
+          onCropComplete={(croppedImage) => {
+            form.setValue('image', croppedImage);
+            setShowCropper(false);
+            URL.revokeObjectURL(imageSrc);
+            setImageSrc(null);
+          }}
+          onCancel={() => {
+            setShowCropper(false);
+            URL.revokeObjectURL(imageSrc);
+            setImageSrc(null);
+            // Reset the file input
+            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+            if (fileInput) fileInput.value = '';
+          }}
+        />
+      )}
     </Card>
   );
 }
