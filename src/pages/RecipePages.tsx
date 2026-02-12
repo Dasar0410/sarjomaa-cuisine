@@ -5,6 +5,7 @@ import IngredientsCard from '../components/IngredientsCard'
 import NutritionCard from '../components/NutritionCard'
 import { getRecipeById } from '../api/api'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 
 function RecipePages() {
     const {id} = useParams<{ id: string}>()
@@ -13,6 +14,8 @@ function RecipePages() {
         queryKey: ['recipe', id],
         queryFn: () => getRecipeById(Number(id)),
     })
+
+    const [portions, setPortions] = useState(recipeData?.servings ?? 1)
 
     return (
         <>
@@ -28,8 +31,8 @@ function RecipePages() {
                 
                 {/* Right column: IngredientsCard and NutritionCard stacked */}
                 <div className='flex flex-col'>
-                    {recipeData && <IngredientsCard recipe={recipeData} />}
-                    {recipeData && <NutritionCard recipe={recipeData} />}
+                    {recipeData && <IngredientsCard recipe={recipeData} portions={portions} setPortions={setPortions} />}
+                    {recipeData && <NutritionCard recipe={recipeData} portions={portions} />}
                 </div>
             </div>
         </>

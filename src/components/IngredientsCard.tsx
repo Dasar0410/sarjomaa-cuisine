@@ -1,9 +1,13 @@
 import {Recipe} from '../types/recipe'
-import { useState } from 'react'
 import { Undo2 } from 'lucide-react'
 
-function IngredientsCard({recipe}: {recipe: Recipe}) {
-    const [portions, setPortions] = useState(recipe.servings);
+interface IngredientsCardProps {
+    recipe: Recipe;
+    portions: number;
+    setPortions: (portions: number) => void;
+}
+
+function IngredientsCard({recipe, portions, setPortions}: IngredientsCardProps) {
     const portionMultiplier = portions / recipe.servings;
 
     return (
