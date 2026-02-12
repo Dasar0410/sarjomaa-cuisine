@@ -5,7 +5,7 @@ import IngredientsCard from '../components/IngredientsCard'
 import NutritionCard from '../components/NutritionCard'
 import { getRecipeById } from '../api/api'
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function RecipePages() {
     const {id} = useParams<{ id: string}>()
@@ -15,7 +15,14 @@ function RecipePages() {
         queryFn: () => getRecipeById(Number(id)),
     })
 
-    const [portions, setPortions] = useState(recipeData?.servings ?? 1)
+    const [portions, setPortions] = useState(1)
+
+    // Update portions when recipeData becomes available
+    useEffect(() => {
+        if (recipeData?.servings) {
+            setPortions(recipeData.servings)
+        }
+    }, [recipeData?.servings])
 
     return (
         <>

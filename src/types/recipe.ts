@@ -19,7 +19,7 @@ export interface Recipe {
     image_url: string
     creator: string
     tags?: Tag[]
-    nutrition?: RecipeNutrition
+    nutrition?: RecipeNutrition | null
   }
 
   export interface Step{

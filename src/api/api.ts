@@ -18,7 +18,7 @@ export async function getRecipes(): Promise<Recipe[]> {
   const recipes = (data || []).map((recipe: any) => ({
     ...recipe,
     tags: recipe.recipe_tags?.map((rt: any) => rt.tags) || [],
-    nutrition: recipe.recipe_nutrition?.[0] || null
+    nutrition: recipe.recipe_nutrition?.[0] || undefined
   }))
   
   return recipes as Recipe[]
@@ -55,7 +55,7 @@ export async function getRecipeById(id: number): Promise<Recipe | null> {
   // Transform nutrition data
   const recipe = {
     ...data,
-    nutrition: data.recipe_nutrition?.[0] || null
+    nutrition: data.recipe_nutrition?.[0] || undefined
   }
   
   return recipe as Recipe
