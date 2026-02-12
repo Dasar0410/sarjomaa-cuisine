@@ -19,6 +19,7 @@ export interface Recipe {
     image_url: string
     creator: string
     tags?: Tag[]
+    nutrition?: RecipeNutrition
   }
 
   export interface Step{
@@ -31,4 +32,14 @@ export interface Recipe {
     unit: string
     amount: number
     
+  }
+
+  export interface RecipeNutrition {
+    id?: number
+    recipe_id?: number
+    calories: number
+    protein: number
+    carbohydrates: number
+    fat: number
+    fiber: number
   }

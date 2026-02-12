@@ -2,14 +2,13 @@ import { Recipe } from '../types/recipe';
 import { UserAuth } from '@/context/AuthContext';
 import { Edit } from 'lucide-react';
 
-
 function TitleInstructionCards({ recipe }: { recipe: Recipe }){
 
 const isAdmin = UserAuth().session?.user.id === import.meta.env.VITE_ADMIN_USER_ID;
 
 return(
     
-<section className="shadow-lg p-8 mx-8 mb-8 justify-center rounded-2xl bg-white lg:w-1/2">
+<section className="shadow-lg p-8 md:mx-8 mb-8 mx-4 justify-center rounded-2xl bg-white w-full lg:w-1/2 h-fit ">
     <div className=' leading-loose'>
         <div className='flex flex-col items-center text-center'>
             

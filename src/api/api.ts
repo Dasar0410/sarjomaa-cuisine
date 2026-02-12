@@ -2,22 +2,23 @@
 // logic related to fetching or filtering recipes to be added here.
 
 import supabase from '../api/supabase'
-import { Recipe } from '../types/recipe'
+import { Recipe, RecipeNutrition } from '../types/recipe'
 
 export async function getRecipes(): Promise<Recipe[]> {
   const { data, error } = await supabase
     .from('recipes')
-    .select('*, recipe_tags(tags(id, name, slug_text))')
+    .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*)')
 
   if (error) {
     console.error('Error fetching recipes:', error)
     return []
   }
   
-  // Transform to flatten tags from recipe_tags join table
+  // Transform to flatten tags and nutrition from join tables
   const recipes = (data || []).map((recipe: any) => ({
     ...recipe,
-    tags: recipe.recipe_tags?.map((rt: any) => rt.tags) || []
+    tags: recipe.recipe_tags?.map((rt: any) => rt.tags) || [],
+    nutrition: recipe.recipe_nutrition?.[0] || null
   }))
   
   return recipes as Recipe[]
@@ -42,7 +43,7 @@ export async function getRecipeCard(i: number): Promise<Recipe[]> {
 export async function getRecipeById(id: number): Promise<Recipe | null> {
   const { data, error } = await supabase
     .from('recipes')
-    .select('*')
+    .select('*, recipe_nutrition(*)')
     .eq('id', id)
     .single()
 
@@ -50,7 +51,14 @@ export async function getRecipeById(id: number): Promise<Recipe | null> {
     console.error('Error fetching recipe:', error)
     return null
   }
-  return data as Recipe
+  
+  // Transform nutrition data
+  const recipe = {
+    ...data,
+    nutrition: data.recipe_nutrition?.[0] || null
+  }
+  
+  return recipe as Recipe
 }
 
 export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[]) {
@@ -123,4 +131,40 @@ export async function searchRecipes(query: string): Promise<Recipe[]> {
   }
   // Return an empty array if no data is returned
   return (data as Recipe[]) || []
+}
+
+// Nutrition API functions
+export async function addNutrition(nutrition: RecipeNutrition) {
+  const { data, error } = await supabase
+    .from('recipe_nutrition')
+    .insert([nutrition])
+    .select()
+
+  if (error) {
+    throw new Error('Error adding nutrition info: ' + error.message)
+  }
+  
+  return data[0]
+}
+
+export async function updateNutrition(nutrition: RecipeNutrition, recipeId: number) {
+  const { error } = await supabase
+    .from('recipe_nutrition')
+    .update(nutrition)
+    .eq('recipe_id', recipeId)
+
+  if (error) {
+    throw new Error('Error updating nutrition info: ' + error.message)
+  }
+}
+
+export async function deleteNutrition(recipeId: number) {
+  const { error } = await supabase
+    .from('recipe_nutrition')
+    .delete()
+    .eq('recipe_id', recipeId)
+
+  if (error) {
+    console.error('Error deleting nutrition info:', error)
+  }
 }

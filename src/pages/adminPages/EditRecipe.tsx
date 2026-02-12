@@ -1,6 +1,6 @@
 import NavigationBar from "@/components/NavigationBar"
-import { Recipe, Ingredient } from '@/types/recipe';
-import { updateRecipe as updateRecipe, getRecipeById } from '@/api/api';
+import { Recipe, Ingredient, RecipeNutrition } from '@/types/recipe';
+import { updateRecipe as updateRecipe, getRecipeById, addNutrition, updateNutrition } from '@/api/api';
 import supabase from '@/api/supabase';
 import imageCompression from "browser-image-compression";
 import { UserAuth } from '@/context/AuthContext';
@@ -8,9 +8,8 @@ import RecipeForm from './RecipeForm';
 import { useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '../../components/ui/button';
-
-import { useDeleteRecipe } from '../../hooks/useDeleteRecipe'
+import { Button } from '@/components/ui/button';
+import { useDeleteRecipe } from '@/hooks/useDeleteRecipe';
 
 function EditRecipe() {
   const { session } = UserAuth();
@@ -19,10 +18,11 @@ function EditRecipe() {
   const navigate = useNavigate();
   const { handleDelete, isDeleting } = useDeleteRecipe();
 
-  const { data: recipeData} = useQuery({
+  const { data: recipe, isLoading } = useQuery({
     queryKey: ['recipe', id],
     queryFn: () => getRecipeById(Number(id)),
-})
+    enabled: !!id,
+  });
 
   async function compressRecipeImage(file: File): Promise<File> {
     const options = {
@@ -41,7 +41,8 @@ function EditRecipe() {
     values: any,
     ingredients: Ingredient[],
     steps: Array<{ instruction: string; stepNumber: number }>,
-    tagIds: number[]
+    tagIds: number[],
+    nutrition: RecipeNutrition
   ) {
     setIsSubmitting(true);
 
@@ -54,13 +55,13 @@ function EditRecipe() {
         throw new Error("Recipe ID is missing");
       }
 
-      let imageUrl = recipeData?.image_url || "";
+      let imageUrl = recipe?.image_url || "";
 
       // If a new image was uploaded, compress and upload it
       if (values.image) {
         // Delete the old image if it exists
-        if (recipeData?.image_url) {
-          const urlParts = recipeData.image_url.split('/recipe-images/');
+        if (recipe?.image_url) {
+          const urlParts = recipe.image_url.split('/recipe-images/');
           const oldImagePath = urlParts[1];
           
           if (oldImagePath) {
@@ -88,7 +89,7 @@ function EditRecipe() {
       }
 
       const updatedRecipe: Recipe = {
-        ...recipeData,
+        ...recipe,
         title: values.title,
         description: values.description,
         cuisine: values.cuisine,
@@ -99,8 +100,8 @@ function EditRecipe() {
         ingredients: ingredients,
         steps: steps,
         image_url: imageUrl,
-        created_at: recipeData?.created_at || new Date().toISOString(),
-        creator: recipeData?.creator || session.user.id,
+        created_at: recipe?.created_at || new Date().toISOString(),
+        creator: recipe?.creator || session.user.id,
       };
 
       await updateRecipe(updatedRecipe, parseInt(id));
@@ -128,6 +129,30 @@ function EditRecipe() {
         }
       }
 
+      // Handle nutrition info
+      if (nutrition.calories > 0) {
+        nutrition.recipe_id = parseInt(id);
+        
+        // Check if nutrition info already exists
+        if (recipe?.nutrition) {
+          // Update existing nutrition
+          await updateNutrition(nutrition, parseInt(id));
+        } else {
+          // Add new nutrition
+          await addNutrition(nutrition);
+        }
+      } else if (recipe?.nutrition) {
+        // User cleared nutrition info - delete it
+        const { error: deleteNutritionError } = await supabase
+          .from('recipe_nutrition')
+          .delete()
+          .eq('recipe_id', parseInt(id));
+        
+        if (deleteNutritionError) {
+          console.error('Error deleting nutrition info:', deleteNutritionError);
+        }
+      }
+
       alert("Recipe updated successfully!");
       navigate(`/recipes/${id}`);
     } catch (error) {
@@ -138,7 +163,7 @@ function EditRecipe() {
     }
   }
 
-  if (!recipeData) {
+  if (isLoading) {
     return (
       <>
         <NavigationBar />
@@ -149,28 +174,39 @@ function EditRecipe() {
     );
   }
 
+  if (!recipe) {
+    return (
+      <>
+        <NavigationBar />
+        <div className="container max-w-4xl mx-auto py-8 px-4">
+          <p>Recipe not found</p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <NavigationBar />
       <div className="container max-w-4xl mx-auto py-8 px-4">
-                    {/* Delete button - only show for authenticated users */}
-                    {session && recipeData && (
-                <div className='flex justify-center mt-6 mb-2'>
-                    <Button 
-                        variant="destructive" 
-                        onClick={() => handleDelete(recipeData, Number(id))}
-                        disabled={isDeleting}
-                        className="mx-4"
-                    >
-                        {isDeleting ? 'Sletter...' : 'Slett oppskrift'}
-                    </Button>
-                </div>
-            )}
+        {/* Delete button */}
+        {session && (
+          <div className='flex justify-end mb-4'>
+            <Button 
+              variant="destructive" 
+              onClick={() => handleDelete(recipe, Number(id))}
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Sletter...' : 'Slett oppskrift'}
+            </Button>
+          </div>
+        )}
+        
         <RecipeForm
           mode="edit"
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
-          initialData={recipeData}
+          initialData={recipe}
         />
       </div>
     </>
