@@ -1,6 +1,6 @@
 import NavigationBar from "@/components/NavigationBar"
 import { Recipe, Ingredient, RecipeNutrition } from '@/types/recipe';
-import { updateRecipe as updateRecipe, getRecipeById, addNutrition, updateNutrition } from '@/api/api';
+import { updateRecipe as updateRecipe, getRecipeById, addNutrition, updateNutrition, deleteNutrition } from '@/api/api';
 import supabase from '@/api/supabase';
 import imageCompression from "browser-image-compression";
 import { UserAuth } from '@/context/AuthContext';
@@ -131,26 +131,22 @@ function EditRecipe() {
 
       // Handle nutrition info
       if (nutrition.calories > 0) {
-        nutrition.recipe_id = parseInt(id);
+        const nutritionData = {
+          ...nutrition,
+          recipe_id: parseInt(id)
+        };
         
         // Check if nutrition info already exists
         if (recipe?.nutrition) {
           // Update existing nutrition
-          await updateNutrition(nutrition, parseInt(id));
+          await updateNutrition(nutritionData, parseInt(id));
         } else {
           // Add new nutrition
-          await addNutrition(nutrition);
+          await addNutrition(nutritionData);
         }
       } else if (recipe?.nutrition) {
         // User cleared nutrition info - delete it
-        const { error: deleteNutritionError } = await supabase
-          .from('recipe_nutrition')
-          .delete()
-          .eq('recipe_id', parseInt(id));
-        
-        if (deleteNutritionError) {
-          console.error('Error deleting nutrition info:', deleteNutritionError);
-        }
+        await deleteNutrition(parseInt(id));
       }
 
       alert("Recipe updated successfully!");

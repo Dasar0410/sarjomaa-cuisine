@@ -2,7 +2,6 @@ import { useState } from 'react';
 import NavigationBar from '../../components/NavigationBar';
 import { Recipe, Ingredient, RecipeNutrition } from '../../types/recipe';
 import { addRecipe, addNutrition } from '../../api/api';
-import supabase from '../../api/supabase';
 import imageCompression from "browser-image-compression";
 import { UserAuth } from '@/context/AuthContext';
 import RecipeForm from './RecipeForm';
@@ -54,24 +53,12 @@ function NewRecipe() {
         image_url: "",
       };
 
-      await addRecipe(recipe, compressedImage, tagIds);
+      const recipeId = await addRecipe(recipe, compressedImage, tagIds);
       
       // Add nutrition info if calories > 0 (indicates user filled it out)
       if (nutrition.calories > 0) {
-        // Get the recipe ID from the last inserted recipe
-        const { data: recipeData } = await supabase
-          .from('recipes')
-          .select('id')
-          .eq('title', recipe.title)
-          .eq('creator', session.user.id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-        
-        if (recipeData) {
-          nutrition.recipe_id = recipeData.id;
-          await addNutrition(nutrition);
-        }
+        nutrition.recipe_id = recipeId;
+        await addNutrition(nutrition);
       }
 
       alert("Recipe added successfully!");

@@ -79,6 +79,7 @@ export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[
   if (error) {
     throw new Error('Error adding recipe: ' + error.message)
   }
+  
   if (tagIds.length > 0 && recipeData) {
     const { error: tagError } = await supabase
     .from('recipe_tags')
@@ -92,6 +93,9 @@ export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[
 
     }
   }
+  
+  // Return the recipe ID
+  return recipeData[0].id
 }
   
 
