@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Trash2, Plus } from 'lucide-react';
-import { Recipe, Ingredient, Tag } from '../../types/recipe';
+import { Recipe, Ingredient, Tag, RecipeNutrition } from '../../types/recipe';
 import { getTags } from '@/api/tag';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -47,7 +47,8 @@ interface RecipeFormProps {
     values: RecipeFormValues,
     ingredients: Ingredient[],
     steps: Array<{ instruction: string; stepNumber: number }>,
-    tagIds: number[]
+    tagIds: number[],
+    nutrition: RecipeNutrition
   ) => Promise<void>;
   isSubmitting: boolean;
 }
@@ -59,6 +60,15 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
   // Image cropping state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
+
+  // Nutrition state
+  const [nutrition, setNutrition] = useState<RecipeNutrition>({
+    calories: initialData?.nutrition?.calories || 0,
+    protein: initialData?.nutrition?.protein || 0,
+    carbohydrates: initialData?.nutrition?.carbohydrates || 0,
+    fat: initialData?.nutrition?.fat || 0,
+    fiber: initialData?.nutrition?.fiber || 0,
+  });
 
   const fetchTags = async () => {
     const data = await getTags();
@@ -136,7 +146,7 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
       return;
     }
 
-    await onSubmit(values, ingredients, steps, tagIds);
+    await onSubmit(values, ingredients, steps, tagIds, nutrition);
   }
 
   return (
@@ -434,6 +444,72 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
               {steps.length === 0 && (
                 <p className="text-sm text-muted-foreground">No steps added yet</p>
               )}
+            </div>
+
+            {/* Nutrition Information Section */}
+            <div className="space-y-4 border-t pt-6">
+              <h3 className="text-lg font-semibold">Næringsinformasjon (Valgfritt)</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Kalorier</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    value={nutrition.calories || ''}
+                    onChange={(e) => setNutrition(prev => ({ ...prev, calories: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Protein (g)</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    value={nutrition.protein || ''}
+                    onChange={(e) => setNutrition(prev => ({ ...prev, protein: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Karbohydrater (g)</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    value={nutrition.carbohydrates || ''}
+                    onChange={(e) => setNutrition(prev => ({ ...prev, carbohydrates: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Fett (g)</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    value={nutrition.fat || ''}
+                    onChange={(e) => setNutrition(prev => ({ ...prev, fat: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Fiber (g)</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    value={nutrition.fiber || ''}
+                    onChange={(e) => setNutrition(prev => ({ ...prev, fiber: Number(e.target.value) }))}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Image Field */}

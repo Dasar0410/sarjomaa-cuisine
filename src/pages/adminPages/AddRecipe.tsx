@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import NavigationBar from '../../components/NavigationBar';
-import { Recipe, Ingredient } from '../../types/recipe';
-import { addRecipe } from '../../api/api';
+import { Recipe, Ingredient, RecipeNutrition } from '../../types/recipe';
+import { addRecipe, addNutrition } from '../../api/api';
 import imageCompression from "browser-image-compression";
 import { UserAuth } from '@/context/AuthContext';
 import RecipeForm from './RecipeForm';
@@ -27,7 +27,8 @@ function NewRecipe() {
     values: any,
     ingredients: Ingredient[],
     steps: Array<{ instruction: string; stepNumber: number }>,
-    tagIds: number[]
+    tagIds: number[],
+    nutrition: RecipeNutrition
   ) {
     setIsSubmitting(true);
 
@@ -52,7 +53,13 @@ function NewRecipe() {
         image_url: "",
       };
 
-      await addRecipe(recipe, compressedImage, tagIds);
+      const recipeId = await addRecipe(recipe, compressedImage, tagIds);
+      
+      // Add nutrition info if calories > 0 (indicates user filled it out)
+      if (nutrition.calories > 0) {
+        nutrition.recipe_id = recipeId;
+        await addNutrition(nutrition);
+      }
 
       alert("Recipe added successfully!");
     } catch (error) {
@@ -64,7 +71,7 @@ function NewRecipe() {
   }
 
   return (
-    <div className="">
+    <>
       <NavigationBar />
       <div className="container max-w-4xl mx-auto py-8 px-4">
         <RecipeForm
@@ -73,7 +80,7 @@ function NewRecipe() {
           isSubmitting={isSubmitting}
         />
       </div>
-    </div>
+    </>
   );
 }
 
