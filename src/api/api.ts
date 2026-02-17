@@ -126,15 +126,22 @@ export async function deleteRecipe(id: number) {
 export async function searchRecipes(query: string): Promise<Recipe[]> {
   const { data, error } = await supabase
     .from('recipes')
-    .select('*')
+    .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*)')
     .ilike('title', `%${query}%`)
 
   if (error) {
     console.error('Error searching recipes:', error)
     return []
   }
-  // Return an empty array if no data is returned
-  return (data as Recipe[]) || []
+  
+  // Transform to flatten tags and nutrition from join tables
+  const recipes = (data || []).map((recipe: any) => ({
+    ...recipe,
+    tags: recipe.recipe_tags?.map((rt: any) => rt.tags) || [],
+    nutrition: recipe.recipe_nutrition?.[0] || undefined
+  }))
+  
+  return recipes as Recipe[]
 }
 
 // Nutrition API functions
