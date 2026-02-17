@@ -55,6 +55,12 @@ function EditRecipe() {
         throw new Error("Recipe ID is missing");
       }
 
+      // Ensure the Supabase client has the current session
+      await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      });
+
       let imageUrl = recipe?.image_url || "";
 
       // If a new image was uploaded, compress and upload it
@@ -89,7 +95,7 @@ function EditRecipe() {
       }
 
       const updatedRecipe: Recipe = {
-        ...recipe,
+        id: recipe?.id,
         title: values.title,
         description: values.description,
         cuisine: values.cuisine,
@@ -102,6 +108,7 @@ function EditRecipe() {
         image_url: imageUrl,
         created_at: recipe?.created_at || new Date().toISOString(),
         creator: recipe?.creator || session.user.id,
+        // Don't include nutrition or tags - they're in separate tables
       };
 
       await updateRecipe(updatedRecipe, parseInt(id));
