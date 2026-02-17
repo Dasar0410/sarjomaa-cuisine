@@ -371,11 +371,11 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                     <SelectItem value="g">g</SelectItem>
                     <SelectItem value="kg">kg</SelectItem>
                     <SelectItem value="ml">ml</SelectItem>
+                    <SelectItem value="dl">dl</SelectItem>
                     <SelectItem value="L">L</SelectItem>
-                    <SelectItem value="tsp">tsp</SelectItem>
-                    <SelectItem value="tbsp">tbsp</SelectItem>
-                    <SelectItem value="cup">cup</SelectItem>
-                    <SelectItem value="pc">pc</SelectItem>
+                    <SelectItem value="ts">ts</SelectItem>
+                    <SelectItem value="ss">ss</SelectItem>
+                    <SelectItem value="stk">stk</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button type="button" onClick={addIngredient} size="icon">
