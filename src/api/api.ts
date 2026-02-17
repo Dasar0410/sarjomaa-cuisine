@@ -100,18 +100,15 @@ export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[
   
 
 export async function updateRecipe(recipe: Recipe, id: number) {
-  // Exclude nutrition and tags from the recipe object as they're in separate tables
-  const { nutrition, tags, ...recipeData } = recipe;
-  
-  const { error } = await supabase
+  const {error } = await supabase
     .from('recipes')
-    .update(recipeData)
+    .update(recipe) // Update the recipe with the new data 
     .eq('id', id) 
-    .select()
+    .select() // Return the updated record
 
   if (error) {
     console.error('Error updating recipe:', error)
-    throw new Error('Error updating recipe: ' + error.message)
+    return null
   }
 }
 
