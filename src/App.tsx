@@ -10,6 +10,7 @@ import Signin from './pages/Signin'
 import AddTag from './pages/adminPages/AddTag'
 import AdminHome from './pages/adminPages/AdminHome'
 import { UserAuth } from './context/AuthContext'
+import CookieConsentBanner from './components/CookieConsentBanner'
 
 function App() {
   const { session } = UserAuth();
@@ -18,6 +19,7 @@ function App() {
 
   return (
     <>
+      <CookieConsentBanner />
       <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<Signup />} />
