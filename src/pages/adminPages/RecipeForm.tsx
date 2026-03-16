@@ -87,7 +87,8 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
   const [currentIngredient, setCurrentIngredient] = useState<Ingredient>({
     name: "",
     unit: "g",
-    amount: 0
+    amount: 0,
+    group_name: ""
   });
 
   // Step form state
@@ -109,8 +110,12 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
 
   const addIngredient = () => {
     if (currentIngredient.name.trim() && currentIngredient.amount > 0) {
-      setIngredients(prev => [...prev, currentIngredient]);
-      setCurrentIngredient({ name: "", unit: "g", amount: 0 });
+      const ingredientToAdd = {
+        ...currentIngredient,
+        group_name: currentIngredient.group_name?.trim() || null
+      };
+      setIngredients(prev => [...prev, ingredientToAdd]);
+      setCurrentIngredient({ name: "", unit: "g", amount: 0, group_name: currentIngredient.group_name });
     }
   };
 
@@ -346,6 +351,12 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Ingredients</label>
               <div className="flex flex-wrap gap-2">
                 <Input
+                  placeholder="Gruppe (optional: f.eks. 'Saus', 'Fyll', 'Dressing')"
+                  value={currentIngredient.group_name || ""}
+                  onChange={(e) => setCurrentIngredient(prev => ({ ...prev, group_name: e.target.value }))}
+                  className="w-full"
+                />
+                <Input
                   placeholder="Ingredient name"
                   value={currentIngredient.name}
                   onChange={(e) => setCurrentIngredient(prev => ({ ...prev, name: e.target.value }))}
@@ -388,6 +399,7 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                   {ingredients.map((ingredient, index) => (
                     <li key={index} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
                       <span>
+                        {ingredient.group_name && <span className="text-muted-foreground text-sm">[{ingredient.group_name}] </span>}
                         {ingredient.amount} {ingredient.unit} {ingredient.name}
                       </span>
                       <Button

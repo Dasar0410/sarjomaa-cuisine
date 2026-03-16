@@ -32,7 +32,7 @@ export interface Recipe {
     name: string
     unit: string
     amount: number
-    
+    group_name?: string | null
   }
 
   export interface RecipeNutrition {
