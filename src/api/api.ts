@@ -3,6 +3,7 @@
 
 import supabase from '../api/supabase'
 import { Recipe, RecipeNutrition } from '../types/recipe'
+import { generateSlug } from '../lib/utils'
 
 export async function getRecipes(): Promise<Recipe[]> {
   const { data, error } = await supabase
@@ -81,15 +82,6 @@ export async function getRecipeById(id: number): Promise<Recipe | null> {
   return recipe as Recipe
 }
 
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/å/g, 'a')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
 
 export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[]) {
   const { data, error: storageError  } = await supabase.storage.from('recipe-images').upload('recipes/' + crypto.randomUUID(), imageFile)
