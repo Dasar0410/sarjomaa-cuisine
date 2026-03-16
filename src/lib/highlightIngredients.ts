@@ -8,6 +8,7 @@ function isIngredientMatch(word: string, ingredientNames: string[]): boolean {
 export function highlightIngredients(text: string, ingredientNames: string[]): ReactNode {
   if (ingredientNames.length === 0) return text;
 
+  const normalizedNames = ingredientNames.map(name => name.trim().toLowerCase());
   const tokens = text.split(/(\s+)/);
 
   return tokens.map((token, i) => {
@@ -17,7 +18,7 @@ export function highlightIngredients(text: string, ingredientNames: string[]): R
     const word = match ? match[1] : token;
     const punctuation = match ? match[2] : '';
 
-    if (word.length >= 3 && isIngredientMatch(word, ingredientNames)) {
+    if (word.length >= 3 && isIngredientMatch(word, normalizedNames)) {
       return createElement('span', { key: i },
         createElement('span', { className: 'font-bold text-brand-primary' }, word),
         punctuation

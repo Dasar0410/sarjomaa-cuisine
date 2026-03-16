@@ -108,8 +108,8 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
       cuisine: initialData?.cuisine || "",
       meal_type: initialData?.meal_type || "",
       spice_level: initialData?.spice_level || "",
-      cook_time: initialData?.cook_time || 1,
-      servings: initialData?.servings || 1,
+      cook_time: initialData?.cook_time || undefined,
+      servings: initialData?.servings || undefined,
       image: undefined,
     },
   });
@@ -127,7 +127,13 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
 
   const removeIngredient = (index: number) => {
     setIngredients(prev => prev.filter((_, i) => i !== index));
-    if (editingIngredientIndex === index) setEditingIngredientIndex(null);
+    if (editingIngredientIndex === null) return;
+    if (editingIngredientIndex === index) {
+      setEditingIngredientIndex(null);
+      setEditingIngredient(null);
+    } else if (index < editingIngredientIndex) {
+      setEditingIngredientIndex(editingIngredientIndex - 1);
+    }
   };
 
   const moveIngredient = (index: number, direction: 'up' | 'down') => {
@@ -138,9 +144,14 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
       [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
       return next;
     });
-    // Follow the edited item if it moved
-    if (editingIngredientIndex === index) {
-      setEditingIngredientIndex(direction === 'up' ? index - 1 : index + 1);
+    // Update editing index to follow the correct item after swap
+    if (editingIngredientIndex !== null) {
+      const swapIndex = direction === 'up' ? index - 1 : index + 1;
+      if (editingIngredientIndex === index) {
+        setEditingIngredientIndex(swapIndex);
+      } else if (editingIngredientIndex === swapIndex) {
+        setEditingIngredientIndex(index);
+      }
     }
   };
 
@@ -179,7 +190,13 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
       ...step,
       stepNumber: idx + 1
     })));
-    if (editingStepIndex === index) setEditingStepIndex(null);
+    if (editingStepIndex === null) { /* no-op */ }
+    else if (editingStepIndex === index) {
+      setEditingStepIndex(null);
+      setEditingStepText("");
+    } else if (index < editingStepIndex) {
+      setEditingStepIndex(editingStepIndex - 1);
+    }
   };
 
   const moveStep = (index: number, direction: 'up' | 'down') => {
@@ -191,8 +208,13 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
       // Renumber
       return next.map((step, idx) => ({ ...step, stepNumber: idx + 1 }));
     });
-    if (editingStepIndex === index) {
-      setEditingStepIndex(direction === 'up' ? index - 1 : index + 1);
+    if (editingStepIndex !== null) {
+      const swapIndex = direction === 'up' ? index - 1 : index + 1;
+      if (editingStepIndex === index) {
+        setEditingStepIndex(swapIndex);
+      } else if (editingStepIndex === swapIndex) {
+        setEditingStepIndex(index);
+      }
     }
   };
 
@@ -362,11 +384,12 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                   <FormLabel>Cook Time (minutes)</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="30"
+                      placeholder="0"
                       type='number'
                       min={1}
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />
@@ -387,7 +410,8 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                       min={1}
                       placeholder="Number of servings"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />

@@ -33,12 +33,12 @@ function IngredientsCard({recipe, portions, setPortions}: IngredientsCardProps) 
     const hasGroups = grouped.some(g => g.group !== null);
 
     const renderIngredient = (ingredient: Ingredient, index: number) => (
-        <div key={index} className='flex items-center gap-2'>
-            <input type="checkbox" name={ingredient.name} value={ingredient.amount} />
-            <label>
+        <li key={index} className='flex items-center gap-2'>
+            <label className='flex items-center gap-2 cursor-pointer'>
+                <input type="checkbox" name={ingredient.name} value={ingredient.amount} />
                 {ingredient.name} - {(ingredient.amount * portionMultiplier).toFixed(1)} <span className='normal-case'>{ingredient.unit}</span>
             </label>
-        </div>
+        </li>
     );
 
     return (

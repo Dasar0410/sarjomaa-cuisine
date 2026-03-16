@@ -36,11 +36,11 @@ return(
         <p className='text-2xl text-gray-800 mb-8'>{recipe.description}</p>
         </div>
         <h2 className="text-2xl font-semibold mt-8 mb-4 ml-4">Instruksjoner</h2>
-        <div className='list-decimal ml-4 space-y-6'>
+        <ol className='list-decimal ml-4 space-y-6'>
         {recipe.steps.map((step) => (
-            <ul key={step.stepNumber} className='list-decimal ml-4 leading-relaxed'>{step.stepNumber}: {highlightIngredients(step.instruction, ingredientNames)}</ul>
+            <li key={step.stepNumber} className='ml-4 leading-relaxed'>{highlightIngredients(step.instruction, ingredientNames)}</li>
         ))}
-            </div>
+            </ol>
     </div>
 </section>
 )
