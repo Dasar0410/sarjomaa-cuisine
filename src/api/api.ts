@@ -64,7 +64,7 @@ export async function getRecipeBySlug(slug: string): Promise<Recipe | null> {
 export async function getRecipeById(id: number): Promise<Recipe | null> {
   const { data, error } = await supabase
     .from('recipes')
-    .select('*, recipe_nutrition(*)')
+    .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*)')
     .eq('id', id)
     .single()
 
@@ -73,9 +73,9 @@ export async function getRecipeById(id: number): Promise<Recipe | null> {
     return null
   }
 
-  // Transform nutrition data
   const recipe = {
     ...data,
+    tags: data.recipe_tags?.map((rt: any) => rt.tags) || [],
     nutrition: data.recipe_nutrition?.[0] || undefined
   }
 

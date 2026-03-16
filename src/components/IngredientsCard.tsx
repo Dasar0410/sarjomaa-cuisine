@@ -20,7 +20,11 @@ function groupIngredients(ingredients: Ingredient[]): { group: string | null; it
         groupMap.get(key)!.push(ingredient);
     }
 
-    return groups;
+    return groups.sort((a, b) => {
+        if (a.group === null && b.group !== null) return -1;
+        if (a.group !== null && b.group === null) return 1;
+        return 0;
+    });
 }
 
 function IngredientsCard({recipe, portions, setPortions}: IngredientsCardProps) {

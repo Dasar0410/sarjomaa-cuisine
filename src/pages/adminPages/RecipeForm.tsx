@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, ArrowUp, ArrowDown, Pencil, Check, X } from 'lucide-react';
 import { Recipe, Ingredient, Tag, RecipeNutrition } from '../../types/recipe';
 import { getTags } from '@/api/tag';
 import { Button } from '../../components/ui/button';
@@ -91,6 +91,12 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
     group_name: ""
   });
 
+  // Editing state
+  const [editingIngredientIndex, setEditingIngredientIndex] = useState<number | null>(null);
+  const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(null);
+  const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
+  const [editingStepText, setEditingStepText] = useState<string>("");
+
   // Step form state
   const [currentStep, setCurrentStep] = useState<string>("");
 
@@ -121,6 +127,41 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
 
   const removeIngredient = (index: number) => {
     setIngredients(prev => prev.filter((_, i) => i !== index));
+    if (editingIngredientIndex === index) setEditingIngredientIndex(null);
+  };
+
+  const moveIngredient = (index: number, direction: 'up' | 'down') => {
+    setIngredients(prev => {
+      const next = [...prev];
+      const swapIndex = direction === 'up' ? index - 1 : index + 1;
+      if (swapIndex < 0 || swapIndex >= next.length) return prev;
+      [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
+      return next;
+    });
+    // Follow the edited item if it moved
+    if (editingIngredientIndex === index) {
+      setEditingIngredientIndex(direction === 'up' ? index - 1 : index + 1);
+    }
+  };
+
+  const startEditIngredient = (index: number) => {
+    setEditingIngredientIndex(index);
+    setEditingIngredient({ ...ingredients[index] });
+  };
+
+  const saveEditIngredient = () => {
+    if (editingIngredientIndex === null || !editingIngredient) return;
+    if (!editingIngredient.name.trim() || editingIngredient.amount <= 0) return;
+    setIngredients(prev => prev.map((ing, i) =>
+      i === editingIngredientIndex ? { ...editingIngredient, group_name: editingIngredient.group_name?.trim() || null } : ing
+    ));
+    setEditingIngredientIndex(null);
+    setEditingIngredient(null);
+  };
+
+  const cancelEditIngredient = () => {
+    setEditingIngredientIndex(null);
+    setEditingIngredient(null);
   };
 
   const addStep = () => {
@@ -138,6 +179,40 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
       ...step,
       stepNumber: idx + 1
     })));
+    if (editingStepIndex === index) setEditingStepIndex(null);
+  };
+
+  const moveStep = (index: number, direction: 'up' | 'down') => {
+    setSteps(prev => {
+      const next = [...prev];
+      const swapIndex = direction === 'up' ? index - 1 : index + 1;
+      if (swapIndex < 0 || swapIndex >= next.length) return prev;
+      [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
+      // Renumber
+      return next.map((step, idx) => ({ ...step, stepNumber: idx + 1 }));
+    });
+    if (editingStepIndex === index) {
+      setEditingStepIndex(direction === 'up' ? index - 1 : index + 1);
+    }
+  };
+
+  const startEditStep = (index: number) => {
+    setEditingStepIndex(index);
+    setEditingStepText(steps[index].instruction);
+  };
+
+  const saveEditStep = () => {
+    if (editingStepIndex === null || !editingStepText.trim()) return;
+    setSteps(prev => prev.map((step, i) =>
+      i === editingStepIndex ? { ...step, instruction: editingStepText } : step
+    ));
+    setEditingStepIndex(null);
+    setEditingStepText("");
+  };
+
+  const cancelEditStep = () => {
+    setEditingStepIndex(null);
+    setEditingStepText("");
   };
 
   async function handleSubmit(values: RecipeFormValues) {
@@ -357,12 +432,6 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                   className="w-full"
                 />
                 <Input
-                  placeholder="Ingredient name"
-                  value={currentIngredient.name}
-                  onChange={(e) => setCurrentIngredient(prev => ({ ...prev, name: e.target.value }))}
-                  className="flex-1 min-w-[200px]"
-                />
-                <Input
                   type="number"
                   placeholder="Amount"
                   value={currentIngredient.amount || ""}
@@ -389,6 +458,12 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                     <SelectItem value="stk">stk</SelectItem>
                   </SelectContent>
                 </Select>
+                <Input
+                  placeholder="Ingredient name"
+                  value={currentIngredient.name}
+                  onChange={(e) => setCurrentIngredient(prev => ({ ...prev, name: e.target.value }))}
+                  className="flex-1 min-w-[200px]"
+                />
                 <Button type="button" onClick={addIngredient} size="icon">
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -397,19 +472,77 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
               {ingredients.length > 0 && (
                 <ul className="space-y-2">
                   {ingredients.map((ingredient, index) => (
-                    <li key={index} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-                      <span>
-                        {ingredient.group_name && <span className="text-muted-foreground text-sm">[{ingredient.group_name}] </span>}
-                        {ingredient.amount} {ingredient.unit} {ingredient.name}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeIngredient(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                    <li key={index} className="flex items-center gap-2 p-3 bg-secondary rounded-lg">
+                      {editingIngredientIndex === index && editingIngredient ? (
+                        <>
+                          <div className="flex-1 flex flex-wrap gap-2">
+                            <Input
+                              placeholder="Gruppe"
+                              value={editingIngredient.group_name || ""}
+                              onChange={(e) => setEditingIngredient({ ...editingIngredient, group_name: e.target.value })}
+                              className="w-full bg-white"
+                            />
+                            <Input
+                              type="number"
+                              value={editingIngredient.amount || ""}
+                              onChange={(e) => setEditingIngredient({ ...editingIngredient, amount: Number(e.target.value) })}
+                              className="w-20 bg-white"
+                              min="0"
+                              step="0.1"
+                            />
+                            <Select
+                              value={editingIngredient.unit}
+                              onValueChange={(value) => setEditingIngredient({ ...editingIngredient, unit: value })}
+                            >
+                              <SelectTrigger className="w-20 bg-white">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="g">g</SelectItem>
+                                <SelectItem value="kg">kg</SelectItem>
+                                <SelectItem value="ml">ml</SelectItem>
+                                <SelectItem value="dl">dl</SelectItem>
+                                <SelectItem value="L">L</SelectItem>
+                                <SelectItem value="ts">ts</SelectItem>
+                                <SelectItem value="ss">ss</SelectItem>
+                                <SelectItem value="stk">stk</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Input
+                              value={editingIngredient.name}
+                              onChange={(e) => setEditingIngredient({ ...editingIngredient, name: e.target.value })}
+                              className="flex-1 min-w-[120px] bg-white"
+                            />
+                          </div>
+                          <Button type="button" variant="ghost" size="icon" onClick={saveEditIngredient}>
+                            <Check className="h-4 w-4 text-green-600" />
+                          </Button>
+                          <Button type="button" variant="ghost" size="icon" onClick={cancelEditIngredient}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex flex-col gap-1">
+                            <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveIngredient(index, 'up')} disabled={index === 0}>
+                              <ArrowUp className="h-3 w-3" />
+                            </Button>
+                            <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveIngredient(index, 'down')} disabled={index === ingredients.length - 1}>
+                              <ArrowDown className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <span className="flex-1">
+                            {ingredient.group_name && <span className="text-muted-foreground text-sm">[{ingredient.group_name}] </span>}
+                            {ingredient.amount} {ingredient.unit} - {ingredient.name}
+                          </span>
+                          <Button type="button" variant="ghost" size="icon" onClick={() => startEditIngredient(index)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button type="button" variant="ghost" size="icon" onClick={() => removeIngredient(index)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -438,17 +571,43 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
               {steps.length > 0 && (
                 <ol className="space-y-2">
                   {steps.map((step, index) => (
-                    <li key={index} className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                      <span className="font-semibold text-sm mt-1">{step.stepNumber}.</span>
-                      <span className="flex-1">{step.instruction}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeStep(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                    <li key={index} className="flex items-start gap-2 p-3 bg-secondary rounded-lg">
+                      {editingStepIndex === index ? (
+                        <>
+                          <span className="font-semibold text-sm mt-1">{step.stepNumber}.</span>
+                          <Textarea
+                            value={editingStepText}
+                            onChange={(e) => setEditingStepText(e.target.value)}
+                            className="flex-1 resize-none bg-white"
+                            rows={2}
+                          />
+                          <Button type="button" variant="ghost" size="icon" onClick={saveEditStep}>
+                            <Check className="h-4 w-4 text-green-600" />
+                          </Button>
+                          <Button type="button" variant="ghost" size="icon" onClick={cancelEditStep}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex flex-col gap-1 mt-1">
+                            <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveStep(index, 'up')} disabled={index === 0}>
+                              <ArrowUp className="h-3 w-3" />
+                            </Button>
+                            <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveStep(index, 'down')} disabled={index === steps.length - 1}>
+                              <ArrowDown className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <span className="font-semibold text-sm mt-1">{step.stepNumber}.</span>
+                          <span className="flex-1">{step.instruction}</span>
+                          <Button type="button" variant="ghost" size="icon" onClick={() => startEditStep(index)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button type="button" variant="ghost" size="icon" onClick={() => removeStep(index)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </>
+                      )}
                     </li>
                   ))}
                 </ol>
