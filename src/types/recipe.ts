@@ -6,6 +6,7 @@ export interface Tag {
 
 export interface Recipe {
     id?: number
+    slug?: string
     title: string
     description: string
     ingredients: Ingredient[]

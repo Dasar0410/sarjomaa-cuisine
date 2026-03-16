@@ -42,7 +42,7 @@ function NavigationBar() {
             </li>
             <li>
               <button
-                onClick={() => navigate("/recipes")}
+                onClick={() => navigate("/oppskrifter")}
                 className="block py-2 px-3 rounded text-primary-foreground hover:opacity-80 md:bg-transparent md:p-0"
               >
                 Oppskrifter

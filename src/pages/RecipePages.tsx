@@ -3,16 +3,16 @@ import NavigationBar from '../components/NavigationBar'
 import TitleInstructionCards from '../components/TitleInstructionCard'
 import IngredientsCard from '../components/IngredientsCard'
 import NutritionCard from '../components/NutritionCard'
-import { getRecipeById } from '../api/api'
+import { getRecipeBySlug } from '../api/api'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 
 function RecipePages() {
-    const {id} = useParams<{ id: string}>()
+    const { slug } = useParams<{ slug: string }>()
 
     const { data: recipeData} = useQuery({
-        queryKey: ['recipe', id],
-        queryFn: () => getRecipeById(Number(id)),
+        queryKey: ['recipe', slug],
+        queryFn: () => getRecipeBySlug(slug!),
     })
 
     const [portions, setPortions] = useState(1)

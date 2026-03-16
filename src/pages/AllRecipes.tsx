@@ -26,7 +26,7 @@ function AllRecipes() {
             {recipes.map((recipe) => (
                 <Link 
                 key={recipe.id} 
-                to={`/recipes/${recipe.id}`} 
+                to={`/oppskrifter/${recipe.slug}`}
                 className="block mb-4 md:mb-6 break-inside-avoid"
                 >
                 <RecipeCard recipe={recipe} />
