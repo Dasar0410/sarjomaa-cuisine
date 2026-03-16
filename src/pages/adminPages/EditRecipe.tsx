@@ -1,6 +1,7 @@
 import NavigationBar from "@/components/NavigationBar"
 import { Recipe, Ingredient, RecipeNutrition } from '@/types/recipe';
 import { updateRecipe as updateRecipe, getRecipeById, addNutrition, updateNutrition, deleteNutrition } from '@/api/api';
+import { generateSlug } from '@/lib/utils';
 import supabase from '@/api/supabase';
 import imageCompression from "browser-image-compression";
 import { UserAuth } from '@/context/AuthContext';
@@ -94,8 +95,11 @@ function EditRecipe() {
         imageUrl = supabase.storage.from('recipe-images').getPublicUrl(data.path).data.publicUrl;
       }
 
+      const newSlug = generateSlug(values.title);
+
       const updatedRecipe: Recipe = {
         id: recipe?.id,
+        slug: newSlug,
         title: values.title,
         description: values.description,
         cuisine: values.cuisine,
@@ -157,7 +161,7 @@ function EditRecipe() {
       }
 
       alert("Recipe updated successfully!");
-      navigate(`/recipes/${id}`);
+      navigate(`/oppskrifter/${newSlug}`);
     } catch (error) {
       console.error("Error updating recipe:", error);
       alert("Failed to update recipe. Please try again.");

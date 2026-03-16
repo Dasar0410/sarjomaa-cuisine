@@ -1,5 +1,14 @@
 import './App.css'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
 import Home from './pages/Home'
 import RecipePage from './pages/RecipePages'
 import AllRecipes from './pages/AllRecipes'
@@ -19,13 +28,14 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <CookieConsentBanner />
       <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/signin" element={<Signin />} />
-      <Route path="/recipes/:id" element={<RecipePage />} />
-      <Route path='/recipes' element={<AllRecipes />} />
+      <Route path="/oppskrifter/:slug" element={<RecipePage />} />
+      <Route path='/oppskrifter' element={<AllRecipes />} />
       {isAdmin && (
         <>
           <Route path="/admin/" element={<AdminHome />} />

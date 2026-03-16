@@ -32,7 +32,7 @@ export function useDeleteRecipe() {
       await deleteRecipe(id);
       
       alert('Oppskriften ble slettet!');
-      navigate('/recipes');
+      navigate('/oppskrifter');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Error deleting recipe:', error);

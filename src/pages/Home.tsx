@@ -34,7 +34,7 @@ function Home() {
                 {displayRecipes.map((recipe) => (
                     <Link 
                     key={recipe.id} 
-                    to={`/recipes/${recipe.id}`} 
+                    to={`/oppskrifter/${recipe.slug}`}
                     className="block h-full"
                     >
                     <div className="h-full">
@@ -50,10 +50,7 @@ function Home() {
                         variant="secondary" 
                         size="lg" 
                         className="text-lg px-10 py-6 bg-brand-primary-foreground text-brand-primary hover:bg-brand-background transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                        onClick={() => {
-                            navigate('/recipes');
-                            window.scrollTo({ top: 0 });
-                        }}
+                        onClick={() => navigate('/oppskrifter')}
                     >
                         Se alle oppskrifter →
                     </Button>

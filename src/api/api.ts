@@ -3,6 +3,7 @@
 
 import supabase from '../api/supabase'
 import { Recipe, RecipeNutrition } from '../types/recipe'
+import { generateSlug } from '../lib/utils'
 
 export async function getRecipes(): Promise<Recipe[]> {
   const { data, error } = await supabase
@@ -28,7 +29,7 @@ export async function getRecipes(): Promise<Recipe[]> {
 export async function getRecipeCard(i: number): Promise<Recipe[]> {
   const { data, error } = await supabase
     .from('recipes')
-    .select('title, description, image_url, id, cuisine, created_at')
+    .select('title, description, image_url, id, slug, cuisine, created_at')
     .order('created_at', { ascending: false })
     .limit(i)
 
@@ -38,6 +39,26 @@ export async function getRecipeCard(i: number): Promise<Recipe[]> {
   }
   // Return an empty array if no data is returned
   return (data as Recipe[]) || []
+}
+
+export async function getRecipeBySlug(slug: string): Promise<Recipe | null> {
+  const { data, error } = await supabase
+    .from('recipes')
+    .select('*, recipe_nutrition(*)')
+    .eq('slug', slug)
+    .single()
+
+  if (error) {
+    console.error('Error fetching recipe:', error)
+    return null
+  }
+
+  const recipe = {
+    ...data,
+    nutrition: data.recipe_nutrition?.[0] || undefined
+  }
+
+  return recipe as Recipe
 }
 
 export async function getRecipeById(id: number): Promise<Recipe | null> {
@@ -51,15 +72,16 @@ export async function getRecipeById(id: number): Promise<Recipe | null> {
     console.error('Error fetching recipe:', error)
     return null
   }
-  
+
   // Transform nutrition data
   const recipe = {
     ...data,
     nutrition: data.recipe_nutrition?.[0] || undefined
   }
-  
+
   return recipe as Recipe
 }
+
 
 export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[]) {
   const { data, error: storageError  } = await supabase.storage.from('recipe-images').upload('recipes/' + crypto.randomUUID(), imageFile)
@@ -69,6 +91,7 @@ export async function addRecipe(recipe: Recipe, imageFile: File, tagIds: number[
 
   const imageUrl = supabase.storage.from('recipe-images').getPublicUrl(data.path).data.publicUrl
   recipe.image_url = imageUrl
+  recipe.slug = generateSlug(recipe.title)
   console.log('Image uploaded successfully:', imageUrl)
 
   const { data: recipeData, error } = await supabase
