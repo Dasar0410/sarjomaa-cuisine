@@ -48,13 +48,13 @@ function NavigationBar() {
           {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
 
-        {/* Nav links */}
-        <div className={`${menuOpen ? "block" : "hidden"} absolute top-full left-0 w-full md:static md:block md:w-auto`}>
-          <ul className="font-medium flex flex-col p-4 md:p-0 border border-border md:border-0 bg-background md:bg-primary md:flex-row md:space-x-8">
+        {/* Desktop nav links */}
+        <div className="hidden md:block">
+          <ul className="font-medium flex flex-row space-x-8">
             <li>
               <button
                 onClick={() => handleNav("/")}
-                className="block py-2 px-3 w-full text-left text-foreground md:text-primary-foreground hover:opacity-80 md:p-0"
+                className="text-primary-foreground hover:opacity-80"
               >
                 Hjem
               </button>
@@ -62,7 +62,7 @@ function NavigationBar() {
             <li>
               <button
                 onClick={() => handleNav("/oppskrifter")}
-                className="block py-2 px-3 w-full text-left text-foreground md:text-primary-foreground hover:opacity-80 md:p-0"
+                className="text-primary-foreground hover:opacity-80"
               >
                 Oppskrifter
               </button>
@@ -71,7 +71,7 @@ function NavigationBar() {
               <li>
                 <button
                   onClick={() => handleNav("/admin/")}
-                  className="block py-2 px-3 w-full text-left text-foreground md:text-primary-foreground hover:opacity-80 md:p-0"
+                  className="text-primary-foreground hover:opacity-80"
                 >
                   Admin Panel
                 </button>
@@ -81,14 +81,14 @@ function NavigationBar() {
               {session ? (
                 <button
                   onClick={handleSignOut}
-                  className="block py-2 px-3 w-full text-left text-foreground md:text-primary-foreground hover:opacity-80 md:p-0"
+                  className="text-primary-foreground hover:opacity-80"
                 >
                   Logg ut
                 </button>
               ) : (
                 <button
                   onClick={() => handleNav("/signin")}
-                  className="block py-2 px-3 w-full text-left text-foreground md:text-primary-foreground hover:opacity-80 md:p-0"
+                  className="text-primary-foreground hover:opacity-80"
                 >
                   Logg inn
                 </button>
@@ -97,6 +97,57 @@ function NavigationBar() {
           </ul>
         </div>
       </div>
+
+      {/* Mobile nav menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-primary border-t border-primary-foreground/20">
+          <ul className="flex flex-col px-4 py-2">
+            <li>
+              <button
+                onClick={() => handleNav("/")}
+                className="block w-full text-left py-3 px-2 text-primary-foreground hover:opacity-80"
+              >
+                Hjem
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNav("/oppskrifter")}
+                className="block w-full text-left py-3 px-2 text-primary-foreground hover:opacity-80"
+              >
+                Oppskrifter
+              </button>
+            </li>
+            {isAdmin && (
+              <li>
+                <button
+                  onClick={() => handleNav("/admin/")}
+                  className="block w-full text-left py-3 px-2 text-primary-foreground hover:opacity-80"
+                >
+                  Admin Panel
+                </button>
+              </li>
+            )}
+            <li>
+              {session ? (
+                <button
+                  onClick={handleSignOut}
+                  className="block w-full text-left py-3 px-2 text-primary-foreground hover:opacity-80"
+                >
+                  Logg ut
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleNav("/signin")}
+                  className="block w-full text-left py-3 px-2 text-primary-foreground hover:opacity-80"
+                >
+                  Logg inn
+                </button>
+              )}
+            </li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }
