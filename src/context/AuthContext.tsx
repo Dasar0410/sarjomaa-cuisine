@@ -5,10 +5,11 @@ import {Session } from "@supabase/supabase-js";
 interface AuthContextType {
     //currentUser: User | null;
     session: Session | null;
+    loading: boolean;
     signUp: (username: string, email: string, password: string) => Promise<{ success: boolean; error?: string; data?: any }>;
     signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string; data?: any }>;
+    signInWithGoogle: () => Promise<{ success: boolean; error?: string }>;
     signOut: () => Promise<{success: boolean; error?: string}>;
-    //loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,11 +21,13 @@ interface AuthContextProviderProps {
 
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [session, setSession] = useState<Session | null>(null);
+    const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
+            setLoading(false);
         })
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => { 
@@ -66,6 +69,20 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         return { success: true, data };
     }
 
+    const signInWithGoogle = async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin,
+            },
+        });
+        if (error) {
+            console.error("Error signing in with Google:", error.message);
+            return { success: false, error: error.message };
+        }
+        return { success: true };
+    }
+
     const signOut = async () => {
         const {error} = await supabase.auth.signOut()
 
@@ -78,7 +95,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
 
     return (
-        <AuthContext.Provider value={{ session, signUp, signIn, signOut }}>
+        <AuthContext.Provider value={{ session, loading, signUp, signIn, signInWithGoogle, signOut }}>
             {children}
         </AuthContext.Provider>
     );
