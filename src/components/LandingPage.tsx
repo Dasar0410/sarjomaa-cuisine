@@ -4,8 +4,9 @@ import landingImage from '../assets/undraw_cooking_j2pu.svg';
 
 function LandingPage() {
 
-    const {session} = UserAuth()
-    const name = session?.user?.user_metadata?.display_name || "Gjest"
+    const {session, loading} = UserAuth()
+    const fullName = session?.user?.user_metadata?.display_name || session?.user?.user_metadata?.full_name || "Gjest"
+    const name = loading ? "" : fullName.split(" ")[0]
   return (
     <section className= "relative min-h-screen text-white flex flex-col bg-brand-background cursor-default">
         <div className="flex-1 max-w-7xl mx-auto px-4 pt-10 lg:pt-32 flex flex-col lg:flex-row items-center">
