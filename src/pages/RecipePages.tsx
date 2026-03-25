@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import NavigationBar from '../components/NavigationBar'
 import TitleInstructionCards from '../components/TitleInstructionCard'
 import IngredientsCard from '../components/IngredientsCard'
@@ -26,6 +27,17 @@ function RecipePages() {
 
     return (
         <>
+            {recipeData && (
+                <Helmet>
+                    <title>{recipeData.title} — Sarjomaa Cuisine</title>
+                    <meta name="description" content={recipeData.description} />
+                    <meta property="og:title" content={recipeData.title} />
+                    <meta property="og:description" content={recipeData.description} />
+                    <meta property="og:image" content={recipeData.image_url} />
+                    <meta property="og:url" content={`https://sarjomaa.no/oppskrifter/${recipeData.slug}`} />
+                    <link rel="canonical" href={`https://sarjomaa.no/oppskrifter/${recipeData.slug}`} />
+                </Helmet>
+            )}
             <div className=''><NavigationBar/></div>
             
             <div className=' flex flex-row flex-wrap justify-center'>
