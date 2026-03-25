@@ -44,7 +44,7 @@ export async function getRecipeCard(i: number): Promise<Recipe[]> {
 export async function getRecipeBySlug(slug: string): Promise<Recipe | null> {
   const { data, error } = await supabase
     .from('recipes')
-    .select('*, recipe_nutrition(*)')
+    .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*)')
     .eq('slug', slug)
     .single()
 
@@ -55,6 +55,7 @@ export async function getRecipeBySlug(slug: string): Promise<Recipe | null> {
 
   const recipe = {
     ...data,
+    tags: data.recipe_tags?.map((rt: any) => rt.tags) || [],
     nutrition: data.recipe_nutrition?.[0] || undefined
   }
 

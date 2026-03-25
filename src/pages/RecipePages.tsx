@@ -42,12 +42,15 @@ function RecipePages() {
                         "name": recipeData.title,
                         "description": recipeData.description,
                         "image": recipeData.image_url,
-                        "author": { "@type": "Person", "name": recipeData.creator },
+                        "author": { "@type": "Person", "name": "Daniel Sarjomaa" },
                         "datePublished": recipeData.created_at,
                         "recipeCuisine": recipeData.cuisine,
                         "recipeCategory": recipeData.meal_type,
                         "recipeYield": `${recipeData.servings} porsjoner`,
                         "cookTime": `PT${recipeData.cook_time}M`,
+                        ...(recipeData.tags && recipeData.tags.length > 0 && {
+                            "keywords": recipeData.tags.map(t => t.name).join(', ')
+                        }),
                         "recipeIngredient": recipeData.ingredients.map(
                             i => `${i.amount} ${i.unit} ${i.name}`.trim()
                         ),
