@@ -15,7 +15,7 @@ const ingredientNames = useMemo(
 
 return(
 
-<section className="shadow-lg p-8 md:mx-8 mb-8 mx-4 justify-center rounded-2xl bg-white w-full lg:w-1/2 h-fit ">
+<section className="shadow-lg p-8 md:mx-8 mb-8 mx-4 justify-center rounded-2xl bg-white h-fit ">
     <div className=' leading-loose'>
         <div className='flex flex-col items-center text-center'>
 

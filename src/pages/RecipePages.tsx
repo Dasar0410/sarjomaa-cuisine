@@ -4,17 +4,29 @@ import NavigationBar from '../components/NavigationBar'
 import TitleInstructionCards from '../components/TitleInstructionCard'
 import IngredientsCard from '../components/IngredientsCard'
 import NutritionCard from '../components/NutritionCard'
+import Reviews from '../components/Reviews'
 import { getRecipeBySlug } from '../api/api'
+import { getReviewsByRecipeId } from '../api/review'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+import { UserAuth } from '@/context/AuthContext'
 
 function RecipePages() {
     const { slug } = useParams<{ slug: string }>()
+    const { session } = UserAuth()
 
     const { data: recipeData} = useQuery({
         queryKey: ['recipe', slug],
         queryFn: () => getRecipeBySlug(slug!),
     })
+
+    const { data: reviews = [] } = useQuery({
+        queryKey: ['reviews', recipeData?.id],
+        queryFn: () => getReviewsByRecipeId(recipeData!.id!),
+        enabled: !!recipeData?.id,
+    })
+
+    const userReview = reviews.find(r => r.user_id === session?.user.id) ?? null
 
     const [portions, setPortions] = useState(1)
 
@@ -80,9 +92,12 @@ function RecipePages() {
                     {recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-10 md:my-10 md:w-2/4 object-cover'/>}
                 </div>
                 
-                {/* Left column: TitleInstructionCards */}
-                {recipeData && <TitleInstructionCards recipe={recipeData} />}
-                
+                {/* Left column: TitleInstructionCards + Reviews */}
+                <div className='flex flex-col w-full lg:w-1/2'>
+                    {recipeData && <TitleInstructionCards recipe={recipeData} />}
+                    {recipeData && <Reviews recipeId={recipeData.id!} reviews={reviews} userReview={userReview} />}
+                </div>
+
                 {/* Right column: IngredientsCard and NutritionCard stacked */}
                 <div className='flex flex-col'>
                     {recipeData && <IngredientsCard recipe={recipeData} portions={portions} setPortions={setPortions} />}
