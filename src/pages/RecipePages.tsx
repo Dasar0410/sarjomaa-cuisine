@@ -34,8 +34,8 @@ function RecipePages() {
                     <meta property="og:title" content={recipeData.title} />
                     <meta property="og:description" content={recipeData.description} />
                     <meta property="og:image" content={recipeData.image_url} />
-                    <meta property="og:url" content={`https://sarjomaa.no/oppskrifter/${recipeData.slug}`} />
-                    <link rel="canonical" href={`https://sarjomaa.no/oppskrifter/${recipeData.slug}`} />
+                    <meta property="og:url" content={`https://sarjomaa.no/oppskrifter/${recipeData.slug ?? slug}`} />
+                    <link rel="canonical" href={`https://sarjomaa.no/oppskrifter/${recipeData.slug ?? slug}`} />
                     <script type="application/ld+json">{JSON.stringify({
                         "@context": "https://schema.org/",
                         "@type": "Recipe",
@@ -44,14 +44,14 @@ function RecipePages() {
                         "image": recipeData.image_url,
                         "author": { "@type": "Person", "name": recipeData.creator },
                         "datePublished": recipeData.created_at,
-                        "recipecuisine": recipeData.cuisine,
+                        "recipeCuisine": recipeData.cuisine,
                         "recipeCategory": recipeData.meal_type,
                         "recipeYield": `${recipeData.servings} porsjoner`,
                         "cookTime": `PT${recipeData.cook_time}M`,
                         "recipeIngredient": recipeData.ingredients.map(
                             i => `${i.amount} ${i.unit} ${i.name}`.trim()
                         ),
-                        "recipeInstructions": recipeData.steps
+                        "recipeInstructions": [...recipeData.steps]
                             .sort((a, b) => a.stepNumber - b.stepNumber)
                             .map(s => ({
                                 "@type": "HowToStep",

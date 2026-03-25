@@ -1,28 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
-import { readFileSync, writeFileSync } from 'fs'
+import { writeFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// Read .env manually (Vite env vars aren't available in plain Node scripts)
-function loadEnv() {
-  try {
-    const envPath = resolve(__dirname, '../.env')
-    const lines = readFileSync(envPath, 'utf-8').split('\n')
-    for (const line of lines) {
-      const [key, ...rest] = line.split('=')
-      if (key && rest.length) process.env[key.trim()] = rest.join('=').trim()
-    }
-  } catch {
-    // In CI/production, env vars are set directly — no .env file needed
-  }
-}
+// Load .env for local development — in CI/production env vars are set directly
+dotenv.config({ path: resolve(__dirname, '../.env') })
 
-loadEnv()
-
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY
 const BASE_URL = 'https://sarjomaa.no'
 
 console.log('SUPABASE_URL found:', !!SUPABASE_URL)
