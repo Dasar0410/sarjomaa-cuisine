@@ -21,13 +21,16 @@ function loadEnv() {
 
 loadEnv()
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
 const BASE_URL = 'https://sarjomaa.no'
 
+console.log('SUPABASE_URL found:', !!SUPABASE_URL)
+console.log('SUPABASE_ANON_KEY found:', !!SUPABASE_ANON_KEY)
+
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY')
-  process.exit(1)
+  console.warn('Missing Supabase env vars — skipping sitemap generation')
+  process.exit(0)
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
