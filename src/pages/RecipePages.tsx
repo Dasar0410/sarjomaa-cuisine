@@ -36,6 +36,38 @@ function RecipePages() {
                     <meta property="og:image" content={recipeData.image_url} />
                     <meta property="og:url" content={`https://sarjomaa.no/oppskrifter/${recipeData.slug}`} />
                     <link rel="canonical" href={`https://sarjomaa.no/oppskrifter/${recipeData.slug}`} />
+                    <script type="application/ld+json">{JSON.stringify({
+                        "@context": "https://schema.org/",
+                        "@type": "Recipe",
+                        "name": recipeData.title,
+                        "description": recipeData.description,
+                        "image": recipeData.image_url,
+                        "author": { "@type": "Person", "name": recipeData.creator },
+                        "datePublished": recipeData.created_at,
+                        "recipecuisine": recipeData.cuisine,
+                        "recipeCategory": recipeData.meal_type,
+                        "recipeYield": `${recipeData.servings} porsjoner`,
+                        "cookTime": `PT${recipeData.cook_time}M`,
+                        "recipeIngredient": recipeData.ingredients.map(
+                            i => `${i.amount} ${i.unit} ${i.name}`.trim()
+                        ),
+                        "recipeInstructions": recipeData.steps
+                            .sort((a, b) => a.stepNumber - b.stepNumber)
+                            .map(s => ({
+                                "@type": "HowToStep",
+                                "text": s.instruction
+                            })),
+                        ...(recipeData.nutrition && {
+                            "nutrition": {
+                                "@type": "NutritionInformation",
+                                "calories": `${recipeData.nutrition.calories} calories`,
+                                "proteinContent": `${recipeData.nutrition.protein}g`,
+                                "carbohydrateContent": `${recipeData.nutrition.carbohydrates}g`,
+                                "fatContent": `${recipeData.nutrition.fat}g`,
+                                "fiberContent": `${recipeData.nutrition.fiber}g`,
+                            }
+                        })
+                    })}</script>
                 </Helmet>
             )}
             <div className=''><NavigationBar/></div>
