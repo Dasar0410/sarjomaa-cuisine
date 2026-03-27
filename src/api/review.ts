@@ -6,6 +6,7 @@ export async function getReviewsByRecipeId(recipeId: number): Promise<Review[]> 
       .from('recipe_reviews')
       .select('*, profiles(display_name)')
       .eq('recipe_id', recipeId)
+      .order('created_at', { ascending: false })
 
     if (error) {
       console.error('Error fetching reviews:', error)
