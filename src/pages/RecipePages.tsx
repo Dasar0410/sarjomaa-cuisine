@@ -4,17 +4,30 @@ import NavigationBar from '../components/NavigationBar'
 import TitleInstructionCards from '../components/TitleInstructionCard'
 import IngredientsCard from '../components/IngredientsCard'
 import NutritionCard from '../components/NutritionCard'
+import Reviews from '../components/Reviews'
 import { getRecipeBySlug } from '../api/api'
+import { getReviewsByRecipeId } from '../api/review'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+import { UserAuth } from '@/context/AuthContext'
 
 function RecipePages() {
     const { slug } = useParams<{ slug: string }>()
+    const { session } = UserAuth()
 
     const { data: recipeData} = useQuery({
         queryKey: ['recipe', slug],
         queryFn: () => getRecipeBySlug(slug!),
     })
+
+    const { data: reviews = [] } = useQuery({
+        queryKey: ['reviews', recipeData?.id],
+        queryFn: () => getReviewsByRecipeId(recipeData!.id!),
+        enabled: !!recipeData?.id,
+    })
+
+    const userReview = reviews.find(r => r.user_id === session?.user.id) ?? null
+    const avgRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : undefined
 
     const [portions, setPortions] = useState(1)
 
@@ -69,22 +82,39 @@ function RecipePages() {
                                 "fatContent": `${recipeData.nutrition.fat}g`,
                                 "fiberContent": `${recipeData.nutrition.fiber}g`,
                             }
+                        }),
+                        ...(avgRating !== undefined && reviews.length > 0 && {
+                            "aggregateRating": {
+                                "@type": "AggregateRating",
+                                "ratingValue": avgRating.toFixed(1),
+                                "reviewCount": reviews.length,
+                                "bestRating": "5",
+                                "worstRating": "1"
+                            }
                         })
                     })}</script>
                 </Helmet>
             )}
             <div className=''><NavigationBar/></div>
             
-            <div className=' flex flex-row flex-wrap justify-center'>
+            <div className='flex flex-col md:flex-row md:flex-wrap md:justify-center'>
                 <div className='w-full flex justify-center'>
-                    {recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-10 md:my-10 md:w-2/4 object-cover'/>}
+                    {recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-4 md:mb-10 md:my-10 md:w-2/4 object-cover'/>}
                 </div>
-                
-                {/* Left column: TitleInstructionCards */}
-                {recipeData && <TitleInstructionCards recipe={recipeData} />}
-                
-                {/* Right column: IngredientsCard and NutritionCard stacked */}
-                <div className='flex flex-col'>
+
+                {/* On mobile: contents dissolves this wrapper so children can be ordered freely */}
+                {/* On desktop: restored as the original left column */}
+                <div className='contents md:flex md:flex-col md:w-1/2'>
+                    <div className='order-1 md:order-none'>
+                        {recipeData && <TitleInstructionCards recipe={recipeData} avgRating={avgRating} reviewCount={reviews.length} />}
+                    </div>
+                    <div className='order-last md:order-none'>
+                        {recipeData && <Reviews recipeId={recipeData.id!} reviews={reviews} userReview={userReview} />}
+                    </div>
+                </div>
+
+                {/* Right column */}
+                <div className='order-2 md:order-none flex flex-col'>
                     {recipeData && <IngredientsCard recipe={recipeData} portions={portions} setPortions={setPortions} />}
                     {recipeData && <NutritionCard recipe={recipeData} portions={portions} />}
                 </div>

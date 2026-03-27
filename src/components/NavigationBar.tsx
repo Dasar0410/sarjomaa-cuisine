@@ -33,9 +33,9 @@ function NavigationBar() {
           onClick={() => handleNav("/")}
           className="flex items-center space-x-2 rtl:space-x-reverse"
         >
-          <img src={Logo} className="h-9" alt="Sarjomaa Cuisine Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap">
-            Sarjomaa-Cuisine
+          <img src={Logo} className="h-9" alt="SarjoMat Logo" />
+          <span className="self-center text-2xl whitespace-nowrap tracking-tight">
+            <span className="font-light">Sarjo</span><span className="font-bold">Mat</span>
           </span>
         </button>
 
