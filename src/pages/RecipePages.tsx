@@ -82,25 +82,39 @@ function RecipePages() {
                                 "fatContent": `${recipeData.nutrition.fat}g`,
                                 "fiberContent": `${recipeData.nutrition.fiber}g`,
                             }
+                        }),
+                        ...(avgRating !== undefined && reviews.length > 0 && {
+                            "aggregateRating": {
+                                "@type": "AggregateRating",
+                                "ratingValue": avgRating.toFixed(1),
+                                "reviewCount": reviews.length,
+                                "bestRating": "5",
+                                "worstRating": "1"
+                            }
                         })
                     })}</script>
                 </Helmet>
             )}
             <div className=''><NavigationBar/></div>
             
-            <div className=' flex flex-row flex-wrap justify-center'>
+            <div className='flex flex-col md:flex-row md:flex-wrap md:justify-center'>
                 <div className='w-full flex justify-center'>
-                    {recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-10 md:my-10 md:w-2/4 object-cover'/>}
-                </div>
-                
-                {/* Left column: TitleInstructionCards + Reviews */}
-                <div className='flex flex-col w-full lg:w-1/2'>
-                    {recipeData && <TitleInstructionCards recipe={recipeData} avgRating={avgRating} reviewCount={reviews.length} />}
-                    {recipeData && <Reviews recipeId={recipeData.id!} reviews={reviews} userReview={userReview} />}
+                    {recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-4 md:mb-10 md:my-10 md:w-2/4 object-cover'/>}
                 </div>
 
-                {/* Right column: IngredientsCard and NutritionCard stacked */}
-                <div className='flex flex-col'>
+                {/* On mobile: contents dissolves this wrapper so children can be ordered freely */}
+                {/* On desktop: restored as the original left column */}
+                <div className='contents md:flex md:flex-col md:w-1/2'>
+                    <div className='order-1 md:order-none'>
+                        {recipeData && <TitleInstructionCards recipe={recipeData} avgRating={avgRating} reviewCount={reviews.length} />}
+                    </div>
+                    <div className='order-last md:order-none'>
+                        {recipeData && <Reviews recipeId={recipeData.id!} reviews={reviews} userReview={userReview} />}
+                    </div>
+                </div>
+
+                {/* Right column */}
+                <div className='order-2 md:order-none flex flex-col'>
                     {recipeData && <IngredientsCard recipe={recipeData} portions={portions} setPortions={setPortions} />}
                     {recipeData && <NutritionCard recipe={recipeData} portions={portions} />}
                 </div>

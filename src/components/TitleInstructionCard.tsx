@@ -26,7 +26,7 @@ return(
     <div className=' leading-loose'>
         <div className='flex flex-col items-center text-center'>
 
-        <h1 className='text-5xl mb-4 mt-8 font-bold capitalize'>{recipe.title}
+        <h1 className='text-5xl mb-4 md:mt-8 mt-4 font-bold capitalize'>{recipe.title}
 
         {isAdmin && (
             <a
