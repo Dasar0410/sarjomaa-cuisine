@@ -3,8 +3,15 @@ import { Recipe } from '../types/recipe';
 import { UserAuth } from '@/context/AuthContext';
 import { Edit } from 'lucide-react';
 import { highlightIngredients } from '@/lib/highlightIngredients';
+import StarRating from './StarRating';
 
-function TitleInstructionCards({ recipe }: { recipe: Recipe }){
+interface TitleInstructionCardsProps {
+  recipe: Recipe
+  avgRating?: number
+  reviewCount?: number
+}
+
+function TitleInstructionCards({ recipe, avgRating, reviewCount }: TitleInstructionCardsProps){
 
 const isAdmin = UserAuth().session?.user.id === import.meta.env.VITE_ADMIN_USER_ID;
 
@@ -19,7 +26,7 @@ return(
     <div className=' leading-loose'>
         <div className='flex flex-col items-center text-center'>
 
-        <h1 className='text-5xl mb-8 mt-8 font-bold capitalize'>{recipe.title}
+        <h1 className='text-5xl mb-4 mt-8 font-bold capitalize'>{recipe.title}
 
         {isAdmin && (
             <a
@@ -32,6 +39,13 @@ return(
             </a>
         )}
         </h1>
+
+        {avgRating !== undefined && reviewCount !== undefined && reviewCount > 0 && (
+          <div className='flex items-center gap-2 mb-6'>
+            <StarRating value={avgRating} size={20} />
+            <span className='text-gray-600 text-sm mb-1.5'>{avgRating.toFixed(1)} ({reviewCount})</span>
+          </div>
+        )}
 
         <p className='text-2xl text-gray-800 mb-8'>{recipe.description}</p>
         </div>

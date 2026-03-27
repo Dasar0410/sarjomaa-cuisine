@@ -27,6 +27,7 @@ function RecipePages() {
     })
 
     const userReview = reviews.find(r => r.user_id === session?.user.id) ?? null
+    const avgRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : undefined
 
     const [portions, setPortions] = useState(1)
 
@@ -94,7 +95,7 @@ function RecipePages() {
                 
                 {/* Left column: TitleInstructionCards + Reviews */}
                 <div className='flex flex-col w-full lg:w-1/2'>
-                    {recipeData && <TitleInstructionCards recipe={recipeData} />}
+                    {recipeData && <TitleInstructionCards recipe={recipeData} avgRating={avgRating} reviewCount={reviews.length} />}
                     {recipeData && <Reviews recipeId={recipeData.id!} reviews={reviews} userReview={userReview} />}
                 </div>
 

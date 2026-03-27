@@ -5,6 +5,7 @@ import { UserAuth } from '@/context/AuthContext'
 import { Review } from '../types/review'
 import { addReview, updateReview, deleteReview } from '../api/review'
 import StarRating from './StarRating'
+import { Trash2 } from 'lucide-react'
 import { Button } from './ui/button'
 
 interface ReviewsProps {
@@ -30,13 +31,13 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['reviews', recipeId] })
 
   const addMutation = useMutation({
-    mutationFn: () => addReview(recipeId, session!.user.id, rating, comment || null),
+    mutationFn: ({ r, c }: { r: number; c: string | null }) => addReview(recipeId, session!.user.id, r, c),
     onSuccess: invalidate,
     onError,
   })
 
   const updateMutation = useMutation({
-    mutationFn: () => updateReview(userReview!.id, rating, comment || null),
+    mutationFn: ({ r, c }: { r: number; c: string | null }) => updateReview(userReview!.id, r, c),
     onSuccess: invalidate,
     onError,
   })
@@ -53,6 +54,17 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
 
   const isLoading = addMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
+  function handleRatingChange(value: number) {
+    setRating(value)
+    setError(null)
+    const vars = { r: value, c: userReview?.comment ?? null }
+    if (userReview) {
+      updateMutation.mutate(vars)
+    } else {
+      addMutation.mutate(vars)
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -60,19 +72,19 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
       setError('Velg en stjernebedømmelse.')
       return
     }
+    const vars = { r: rating, c: comment || null }
     if (userReview) {
-      updateMutation.mutate()
+      updateMutation.mutate(vars)
     } else {
-      addMutation.mutate()
+      addMutation.mutate(vars)
     }
   }
 
 
   return (
     <div className='shadow-lg p-8 md:mx-8 mx-4 mb-8 rounded-2xl bg-white'>
-      <h2 className='text-2xl font-semibold mb-4'>Anmeldelser</h2>
+      <h2 className='text-2xl font-semibold mb-4'>Kommentarer</h2>
 
-      {/* Form / login prompt */}
       {!session ? (
         <p className='text-gray-600 mb-6'>
           <Link to='/signin' className='underline font-medium'>Logg inn</Link> for å legge igjen en anmeldelse.
@@ -82,7 +94,7 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-1'>Bedømmelse</label>
-              <StarRating value={rating} onChange={setRating} size={28} />
+              <StarRating value={rating} onChange={handleRatingChange} size={28} />
             </div>
 
             <div>
@@ -91,39 +103,29 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
               </label>
               <textarea
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows={3}
+                onChange={(e) => {
+                  setComment(e.target.value)
+                  e.target.style.height = 'auto'
+                  e.target.style.height = e.target.scrollHeight + 'px'
+                }}
+                rows={1}
                 maxLength={500}
                 placeholder='Del dine tanker om oppskriften...'
-                className='w-full border border-input rounded-md px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring'
+                className='w-full border border-input rounded-md px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring overflow-hidden'
               />
+              <Button type='submit' disabled={isLoading} className='mt-2'>
+                {isLoading ? 'Oppdaterer...' : 'Kommenter'}
+              </Button>
             </div>
 
             {error && <p className='text-sm text-red-600'>{error}</p>}
-
-            <div className='flex gap-3'>
-              <Button type='submit' disabled={isLoading}>
-                {isLoading ? 'Lagrer...' : userReview ? 'Oppdater' : 'Send inn'}
-              </Button>
-              {userReview && (
-                <Button
-                  type='button'
-                  variant='destructive'
-                  disabled={isLoading}
-                  onClick={() => deleteMutation.mutate()}
-                >
-                  Slett
-                </Button>
-              )}
-            </div>
           </form>
         </div>
       )}
 
-      {/* Other users' reviews */}
-      {reviews.length > 0 && (
+      {reviews.filter(r => r.comment).length > 0 && (
         <div className='border-t pt-6 space-y-5'>
-          {reviews.map((review) => (
+          {reviews.filter(r => r.comment).map((review) => (
             <div key={review.id} className='border-b pb-4 last:border-b-0'>
               <div className='flex items-center justify-between mb-1'>
                 <StarRating value={review.rating} size={18} />
@@ -131,21 +133,25 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
                   {new Date(review.created_at).toLocaleDateString('nb-NO')}
                 </span>
               </div>
-              {review.comment && (
-                <>
-                  <p className='text-gray-800 mt-2'>{review.comment}</p>
-                  {review.profiles?.display_name && (
-                    <p className='text-sm text-gray-500 mt-1'>— {review.profiles.display_name}</p>
-                  )}
-                </>
+              <div className='flex items-start justify-between mt-2 gap-2'>
+                <p className='text-gray-800'>{review.comment}</p>
+                {review.id === userReview?.id && (
+                  <button
+                    type='button'
+                    disabled={isLoading}
+                    onClick={() => updateMutation.mutate({ r: userReview.rating, c: null })}
+                    className='text-gray-400 hover:text-red-500 disabled:opacity-40 transition-colors shrink-0'
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
+              </div>
+              {review.profiles?.display_name && (
+                <p className='text-sm text-gray-500 mt-1'>— {review.profiles.display_name}</p>
               )}
             </div>
           ))}
         </div>
-      )}
-
-      {reviews.length === 0 && (
-        <p className='text-gray-500 text-sm'>Ingen anmeldelser ennå. Vær den første!</p>
       )}
     </div>
   )
