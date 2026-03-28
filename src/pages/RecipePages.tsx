@@ -42,7 +42,7 @@ function RecipePages() {
         <>
             {recipeData && (
                 <Helmet>
-                    <title>{recipeData.title} — Sarjomaa Cuisine</title>
+                    <title>{recipeData.title} — SarjoMat</title>
                     <meta name="description" content={recipeData.description} />
                     <meta property="og:title" content={recipeData.title} />
                     <meta property="og:description" content={recipeData.description} />
