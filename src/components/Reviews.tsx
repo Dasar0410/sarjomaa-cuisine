@@ -87,7 +87,12 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
 
       {!session ? (
         <p className='text-gray-600 mb-6'>
-          <Link to='/signin' className='underline font-medium'>Logg inn</Link> for å legge igjen en anmeldelse.
+          {/* TODO: temp fix — hide link from react-snap crawler to prevent it from prerendering auth pages */}
+          {navigator.userAgent !== 'ReactSnap' ? (
+            <Link to='/signin' className='underline font-medium'>Logg inn</Link>
+          ) : (
+            <span className='underline font-medium'>Logg inn</span>
+          )} for å legge igjen en anmeldelse.
         </p>
       ) : (
         <div className='mb-6'>
