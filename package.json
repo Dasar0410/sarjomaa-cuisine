@@ -61,6 +61,6 @@
     "source": "dist",
     "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
     "skipThirdPartyRequests": false,
-    "exclude": ["/admin/**", "/signin", "/signup"]
+    "exclude": ["/admin", "/signin", "/signup"]
   }
 }
