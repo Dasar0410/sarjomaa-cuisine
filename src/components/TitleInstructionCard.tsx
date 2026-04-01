@@ -28,7 +28,8 @@ return(
 
         <h1 className='text-5xl mb-4 md:mt-8 mt-4 font-bold capitalize'>{recipe.title}
 
-        {isAdmin && (
+        {/* TODO: temp fix — also check userAgent to hide from react-snap crawler */}
+        {isAdmin && navigator.userAgent !== 'ReactSnap' && (
             <a
                 href={`/admin/edit-recipe/${recipe.id}`}
                 className=" pl-4"
