@@ -310,9 +310,22 @@ export function RecipeForm({ mode, initialData, onSubmit, isSubmitting }: Recipe
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="italiensk">Italiensk</SelectItem>
-                      <SelectItem value="indisk">Indisk</SelectItem>
+                      <SelectItem value="amerikansk">Amerikansk</SelectItem>
                       <SelectItem value="annet">Annet</SelectItem>
+                      <SelectItem value="britisk">Britisk</SelectItem>
+                      <SelectItem value="fransk">Fransk</SelectItem>
+                      <SelectItem value="gresk">Gresk</SelectItem>
+                      <SelectItem value="indisk">Indisk</SelectItem>
+                      <SelectItem value="italiensk">Italiensk</SelectItem>
+                      <SelectItem value="japansk">Japansk</SelectItem>
+                      <SelectItem value="kinesisk">Kinesisk</SelectItem>
+                      <SelectItem value="koreansk">Koreansk</SelectItem>
+                      <SelectItem value="meksikansk">Meksikansk</SelectItem>
+                      <SelectItem value="norsk">Norsk</SelectItem>
+                      <SelectItem value="polsk">Polsk</SelectItem>
+                      <SelectItem value="spansk">Spansk</SelectItem>
+                      <SelectItem value="tysk">Tysk</SelectItem>
+                      <SelectItem value="tyrkisk">Tyrkisk</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
