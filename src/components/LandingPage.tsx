@@ -1,6 +1,6 @@
 import { UserAuth } from "../context/AuthContext";
 import { Button } from "./ui/button";
-import landingImage from '../assets/undraw_cooking_j2pu.svg';
+import landingImage from '../assets/mealprep.jpg';
 
 function LandingPage() {
 
@@ -28,7 +28,7 @@ function LandingPage() {
 
             </div>
             <div className="md:w-1/2 flex items-center justify-center relative mt-8 md:mt-0 2xl:w-1/2">
-            <img src={landingImage} alt="Cooking illustration" className="w-full h-auto" />
+            <img src={landingImage} alt="Cooking illustration" className="w-full max-w-md h-80 object-cover rounded-2xl" />
             
             </div>
          </div>
