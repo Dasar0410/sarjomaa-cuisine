@@ -2,8 +2,9 @@ import NavigationBar from '../components/NavigationBar';
 import RecipeCard from '../components/RecipeCard';
 import LandingPage from '../components/LandingPage';
 import { Link, useNavigate } from 'react-router-dom';
-import * as api from '../api/api';
+import { searchRecipes } from '../api/api';
 import { Button } from '../components/ui/button';
+import { useState } from 'react';
 import {
     useQuery
   } from '@tanstack/react-query'
@@ -11,9 +12,11 @@ import {
 
 function Home() {
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState<string>('');
+
     const { data} = useQuery({
-        queryKey: ['recipes'],
-        queryFn: api.getRecipes,
+        queryKey: ['recipes', searchTerm],
+        queryFn: () => searchRecipes(searchTerm),
     });
 
     // Get only the 4 newest recipes sorted by created_at

@@ -1,4 +1,5 @@
 import { Recipe } from '../types/recipe'
+import StarRating from './StarRating';
 
 const getSpiceLevel = (spiceLevel: string) => {
   if (!spiceLevel) return '';
@@ -8,6 +9,8 @@ const getSpiceLevel = (spiceLevel: string) => {
   if (level === 'spicy') return '🌶️🌶️';
   return '';
 };
+
+
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
@@ -21,6 +24,11 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       <div className="px-3 py-3 md:px-6 md:py-5 flex flex-col flex-grow"> 
+      {recipe.avg_rating !== undefined && recipe.review_count !== undefined && (
+        <div className="flex">
+          <StarRating value={recipe.avg_rating} size={16} />
+        </div>
+      )}
         <div className="flex items-center gap-2 mb-2 md:mb-3">
           <h3 className="font-bold text-lg md:text-2xl text-brand-foreground capitalize">
             {recipe.title} {getSpiceLevel(recipe.spice_level)}
