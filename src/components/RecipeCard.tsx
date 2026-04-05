@@ -10,8 +10,6 @@ const getSpiceLevel = (spiceLevel: string) => {
   return '';
 };
 
-
-
 function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
     <div className="bg-white w-full h-full rounded-2xl overflow-hidden shadow-md border border-brand-border/30 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group flex flex-col">
@@ -24,7 +22,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       <div className="px-3 py-3 md:px-6 md:py-5 flex flex-col flex-grow"> 
-      {recipe.avg_rating !== undefined && recipe.review_count !== undefined && (
+      {recipe.avg_rating !== undefined && (
         <div className="flex">
           <StarRating value={recipe.avg_rating} size={16} />
         </div>

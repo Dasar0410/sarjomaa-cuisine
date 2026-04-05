@@ -129,10 +129,15 @@ export async function deleteRecipe(id: number) {
 }
 
 export async function searchRecipes(query: string): Promise<Recipe[]> {
-  const { data, error } = await supabase
+  let q = supabase
     .from('recipes')
     .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*), recipe_avg_ratings(avg_rating, review_count)')
-    .ilike('title', `%${query}%`)
+
+  if (query.trim()) {
+    q = q.ilike('title', `%${query}%`)
+  }
+
+  const { data, error } = await q
 
   if (error) {
     console.error('Error searching recipes:', error)
@@ -145,7 +150,7 @@ export async function searchRecipes(query: string): Promise<Recipe[]> {
     tags: recipe.recipe_tags?.map((rt: any) => rt.tags) || [],
     nutrition: recipe.recipe_nutrition?.[0] || undefined,
     avg_rating: recipe.recipe_avg_ratings?.[0]?.avg_rating ?? undefined,
-    review_count: recipe.recipe_avg_ratings?.[0]?.review_count ?? 0
+    review_count: recipe.recipe_avg_ratings?.[0]?.review_count ?? undefined
   }))
   
   return recipes as Recipe[]
