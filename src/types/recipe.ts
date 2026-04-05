@@ -21,6 +21,8 @@ export interface Recipe {
     creator: string
     tags?: Tag[]
     nutrition?: RecipeNutrition | null
+    avg_rating?: number
+    review_count?: number
   }
 
   export interface Step{

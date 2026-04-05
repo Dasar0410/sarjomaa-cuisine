@@ -5,25 +5,6 @@ import supabase from '../api/supabase'
 import { Recipe, RecipeNutrition } from '../types/recipe'
 import { generateSlug } from '../lib/utils'
 
-export async function getRecipes(): Promise<Recipe[]> {
-  const { data, error } = await supabase
-    .from('recipes')
-    .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*)')
-
-  if (error) {
-    console.error('Error fetching recipes:', error)
-    return []
-  }
-  
-  // Transform to flatten tags and nutrition from join tables
-  const recipes = (data || []).map((recipe: any) => ({
-    ...recipe,
-    tags: recipe.recipe_tags?.map((rt: any) => rt.tags) || [],
-    nutrition: recipe.recipe_nutrition?.[0] || undefined
-  }))
-  
-  return recipes as Recipe[]
-}
 
 // Function to get the newest recipes but only information necessary for the recipe card
 export async function getRecipeCard(i: number): Promise<Recipe[]> {
@@ -148,21 +129,28 @@ export async function deleteRecipe(id: number) {
 }
 
 export async function searchRecipes(query: string): Promise<Recipe[]> {
-  const { data, error } = await supabase
+  let q = supabase
     .from('recipes')
-    .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*)')
-    .ilike('title', `%${query}%`)
+    .select('*, recipe_tags(tags(id, name, slug_text)), recipe_nutrition(*), recipe_avg_ratings(avg_rating, review_count)')
+
+  if (query.trim()) {
+    q = q.ilike('title', `%${query}%`)
+  }
+
+  const { data, error } = await q
 
   if (error) {
     console.error('Error searching recipes:', error)
     return []
   }
-  
+
   // Transform to flatten tags and nutrition from join tables
   const recipes = (data || []).map((recipe: any) => ({
     ...recipe,
     tags: recipe.recipe_tags?.map((rt: any) => rt.tags) || [],
-    nutrition: recipe.recipe_nutrition?.[0] || undefined
+    nutrition: recipe.recipe_nutrition?.[0] || undefined,
+    avg_rating: recipe.recipe_avg_ratings?.[0]?.avg_rating ?? undefined,
+    review_count: recipe.recipe_avg_ratings?.[0]?.review_count ?? undefined
   }))
   
   return recipes as Recipe[]
