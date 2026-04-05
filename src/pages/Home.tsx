@@ -12,7 +12,7 @@ import {
 
 function Home() {
     const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm] = useState<string>('');
 
     const { data} = useQuery({
         queryKey: ['recipes', searchTerm],
