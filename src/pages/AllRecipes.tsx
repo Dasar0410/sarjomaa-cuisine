@@ -4,14 +4,16 @@ import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar'
 import FilterSearch from '../components/FilterSearch';
 import { searchRecipes } from '../api/api';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { Skeleton } from 'boneyard-js/react';
 
 function AllRecipes() {
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const { data: recipes = [] } = useQuery({
+    const { data: recipes = [], isLoading } = useQuery({
         queryKey: ['recipes', searchTerm],
         queryFn: () => searchRecipes(searchTerm),
+        placeholderData: keepPreviousData,
     });
 
     const onSearchChange = (term: string) => {
@@ -29,7 +31,9 @@ function AllRecipes() {
                 to={`/oppskrifter/${recipe.slug}`}
                 className="block mb-4 md:mb-6 break-inside-avoid"
                 >
+                <Skeleton name="recipe-card" loading={isLoading}>
                 <RecipeCard recipe={recipe} />
+                </Skeleton>
                 </Link>
             ))}
             </div>

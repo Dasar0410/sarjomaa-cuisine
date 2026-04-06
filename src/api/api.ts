@@ -137,7 +137,7 @@ export async function searchRecipes(query: string): Promise<Recipe[]> {
     q = q.ilike('title', `%${query}%`)
   }
 
-  const { data, error } = await q
+  const { data, error } = await q.order('created_at', { ascending: false })
 
   if (error) {
     console.error('Error searching recipes:', error)

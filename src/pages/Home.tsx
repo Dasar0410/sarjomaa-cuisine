@@ -4,6 +4,7 @@ import LandingPage from '../components/LandingPage';
 import { Link, useNavigate } from 'react-router-dom';
 import { searchRecipes } from '../api/api';
 import { Button } from '../components/ui/button';
+import { Skeleton } from 'boneyard-js/react'
 import { useState } from 'react';
 import {
     useQuery
@@ -14,22 +15,20 @@ function Home() {
     const navigate = useNavigate();
     const [searchTerm] = useState<string>('');
 
-    const { data} = useQuery({
+    const { data, isLoading} = useQuery({
         queryKey: ['recipes', searchTerm],
         queryFn: () => searchRecipes(searchTerm),
     });
 
     // Get only the 4 newest recipes sorted by created_at
-    const displayRecipes = data
-        ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 4) || [];
+    const displayRecipes = data?.slice(0, 4) || [];
 
     return (
         <div className='leading-none'>
             <NavigationBar />
             <LandingPage />
             {/* make card under clickable and lead to the recipepage containing info on the recipe clicked  */}
-            
+
             <div className='text-3xl text-center bg-brand-primary leading-none'>
             <div className='justify-center' id='recipes'>
                 <div className=' md:text-secondary-foreground p-4 md:p-8 pt-12'>
@@ -41,12 +40,14 @@ function Home() {
                     className="block h-full"
                     >
                     <div className="h-full">
+                    <Skeleton name="recipe-card" loading={isLoading}>
                     <RecipeCard recipe={recipe} />
+                    </Skeleton>
                     </div>
                     </Link>
                 ))}
                 </div>
-                
+
                 {/* Se alle oppskrifter button */}
                 <div className="mt-12 mb-16">
                     <Button 
@@ -58,7 +59,6 @@ function Home() {
                         Se alle oppskrifter →
                     </Button>
                 </div>
-                
                 </div>
 
             </div>
