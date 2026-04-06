@@ -32,31 +32,20 @@ function Home() {
             
             <div className='text-3xl text-center bg-brand-primary leading-none'>
             <div className='justify-center' id='recipes'>
-                <div className=' md:text-secondary-foreground p-4 md:p-8 pt-12'>
-                <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8'>
+                <div className=' md:text-secondary-foreground px-8'>
+                <p className='text-left text-xl font-semibold uppercase tracking-widest text-brand-primary-foreground/60 mb-4'>Nyeste oppskrifter</p>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-'>
                 {displayRecipes.map((recipe) => (
                     <Link 
                     key={recipe.id} 
                     to={`/oppskrifter/${recipe.slug}`}
                     className="block h-full"
                     >
-                    <div className="h-full">
+                    <div className="">
                     <RecipeCard recipe={recipe} />
                     </div>
                     </Link>
                 ))}
-                </div>
-                
-                {/* Se alle oppskrifter button */}
-                <div className="mt-12 mb-16">
-                    <Button 
-                        variant="secondary" 
-                        size="lg" 
-                        className="text-lg px-10 py-6 bg-brand-primary-foreground text-brand-primary hover:bg-brand-background transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                        onClick={() => navigate('/oppskrifter')}
-                    >
-                        Se alle oppskrifter →
-                    </Button>
                 </div>
                 
                 </div>
