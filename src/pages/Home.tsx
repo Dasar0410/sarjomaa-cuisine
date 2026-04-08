@@ -32,7 +32,7 @@ function Home() {
             <div className='text-3xl text-center bg-brand-primary leading-none'>
             <div className='justify-center' id='recipes'>
                 <div className=' md:text-secondary-foreground p-4 md:p-8 pt-12'>
-                <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8'>
+                <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-8'>
                 {displayRecipes.map((recipe) => (
                     <Link 
                     key={recipe.id} 
