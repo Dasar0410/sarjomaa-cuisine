@@ -1,6 +1,5 @@
 import { UserAuth } from "../context/AuthContext";
 import { Button } from "./ui/button";
-import landingImage from '../assets/undraw_cooking_j2pu.svg';
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
