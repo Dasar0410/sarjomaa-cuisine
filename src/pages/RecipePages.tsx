@@ -47,8 +47,8 @@ function RecipePages() {
                     <meta property="og:title" content={recipeData.title} />
                     <meta property="og:description" content={recipeData.description} />
                     <meta property="og:image" content={recipeData.image_url} />
-                    <meta property="og:url" content={`https://sarjomaa.no/oppskrifter/${recipeData.slug ?? slug}`} />
-                    <link rel="canonical" href={`https://sarjomaa.no/oppskrifter/${recipeData.slug ?? slug}`} />
+                    <meta property="og:url" content={`https://sarjomat.no/oppskrifter/${recipeData.slug ?? slug}`} />
+                    <link rel="canonical" href={`https://sarjomat.no/oppskrifter/${recipeData.slug ?? slug}`} />
                     <script type="application/ld+json">{JSON.stringify({
                         "@context": "https://schema.org/",
                         "@type": "Recipe",
