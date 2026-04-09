@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import Logo from "../assets/bread.svg";
 import { UserAuth } from '../context/AuthContext';
 import {
   NavigationMenu,
@@ -15,6 +14,7 @@ import { cn } from "@/lib/utils";
 function NavigationBar() {
   const { signOut, session } = UserAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const userId = session?.user.id;
   const isAdmin = userId === import.meta.env.VITE_ADMIN_USER_ID;
@@ -34,9 +34,10 @@ function NavigationBar() {
     setMenuOpen(false);
   };
 
-  const linkClass = cn(
+  const linkClass = (path: string) => cn(
     navigationMenuTriggerStyle(),
-    "bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground focus:bg-primary-foreground/10 focus:text-primary-foreground text-lg rounded-none h-full px-5 py-0"
+    "bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground focus:bg-primary-foreground/10 focus:text-primary-foreground text-lg rounded-none h-full px-5 py-0 border-b-2 border-transparent",
+    pathname === path && "border-primary-foreground"
   );
 
   return (
@@ -44,9 +45,12 @@ function NavigationBar() {
       <div className="max-w-screen-xl flex items-stretch justify-between mx-auto px-4">
         <button
           onClick={() => handleNav("/")}
-          className="flex items-center space-x-2 rtl:space-x-reverse py-4"
+          className="flex space-x-1  py-4"
         >
-          <img src={Logo} className="h-10" alt="SarjoMat Logo" />
+          <svg className="h-10 w-10" viewBox="0 0 24 24" strokeWidth="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+              <path d="M7.00009 20V9C7.00009 9 3.00004 4 9.50009 4H17.0001C24.0002 4 20.0001 9 20.0001 9V18C20.0001 19.1046 19.1047 20 18.0001 20H7.00009Z" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M7.00009 20H6.00009C4.89552 20 4.00009 19.1046 4.00009 18V9C4.00009 9 4.00543e-05 4 6.50009 4H10.0001" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           <span className="self-center text-3xl whitespace-nowrap tracking-tight">
             <span className="font-light">Sarjo</span><span className="font-bold">Mat</span>
           </span>
@@ -66,29 +70,29 @@ function NavigationBar() {
           <NavigationMenu className="h-full items-stretch">
             <NavigationMenuList className="h-full items-stretch space-x-0">
               <NavigationMenuItem className="h-full">
-                <NavigationMenuLink className={linkClass} onClick={() => handleNav("/")}>
+                <NavigationMenuLink className={linkClass("/")} onClick={() => handleNav("/")}>
                   Hjem
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem className="h-full">
-                <NavigationMenuLink className={linkClass} onClick={() => handleNav("/oppskrifter")}>
+                <NavigationMenuLink className={linkClass("/oppskrifter")} onClick={() => handleNav("/oppskrifter")}>
                   Oppskrifter
                 </NavigationMenuLink>
               </NavigationMenuItem>
               {isAdmin && (
                 <NavigationMenuItem className="h-full">
-                  <NavigationMenuLink className={linkClass} onClick={() => handleNav("/admin/")}>
+                  <NavigationMenuLink className={linkClass("/admin/")} onClick={() => handleNav("/admin/")}>
                     Admin Panel
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               )}
               <NavigationMenuItem className="h-full">
                 {session ? (
-                  <NavigationMenuLink className={linkClass} onClick={handleSignOut}>
+                  <NavigationMenuLink className={linkClass("/signout")} onClick={handleSignOut}>
                     Logg ut
                   </NavigationMenuLink>
                 ) : (
-                  <NavigationMenuLink className={linkClass} onClick={() => handleNav("/signin")}>
+                  <NavigationMenuLink className={linkClass("/signin")} onClick={() => handleNav("/signin")}>
                     Logg inn
                   </NavigationMenuLink>
                 )}
