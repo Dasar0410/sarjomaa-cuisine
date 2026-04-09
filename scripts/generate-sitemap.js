@@ -11,7 +11,7 @@ dotenv.config({ path: resolve(__dirname, '../.env') })
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY
-const BASE_URL = 'https://sarjomaa.no'
+const BASE_URL = 'https://sarjomat.no'
 
 console.log('SUPABASE_URL found:', !!SUPABASE_URL)
 console.log('SUPABASE_ANON_KEY found:', !!SUPABASE_ANON_KEY)
