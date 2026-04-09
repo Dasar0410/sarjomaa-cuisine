@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import Logo from "../assets/bread.svg";
 import { UserAuth } from '../context/AuthContext';
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from "./ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
 function NavigationBar() {
   const { signOut, session } = UserAuth();
@@ -11,7 +19,7 @@ function NavigationBar() {
   const userId = session?.user.id;
   const isAdmin = userId === import.meta.env.VITE_ADMIN_USER_ID;
 
-  const handleSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSignOut = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
       await signOut();
@@ -26,12 +34,17 @@ function NavigationBar() {
     setMenuOpen(false);
   };
 
+  const linkClass = cn(
+    navigationMenuTriggerStyle(),
+    "bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground focus:bg-primary-foreground/10 focus:text-primary-foreground text-lg rounded-none h-full px-5 py-0"
+  );
+
   return (
     <nav className="bg-primary text-primary-foreground sticky top-0 z-50 shadow-md">
-      <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl flex items-stretch justify-between mx-auto px-4">
         <button
           onClick={() => handleNav("/")}
-          className="flex items-center space-x-2 rtl:space-x-reverse"
+          className="flex items-center space-x-2 rtl:space-x-reverse py-4"
         >
           <img src={Logo} className="h-10" alt="SarjoMat Logo" />
           <span className="self-center text-3xl whitespace-nowrap tracking-tight">
@@ -48,55 +61,43 @@ function NavigationBar() {
           {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
 
-        {/* Desktop nav links */}
-        <div className="hidden md:block">
-          <ul className="font-medium flex flex-row space-x-8">
-            <li>
-              <button
-                onClick={() => handleNav("/")}
-                className="text-primary-foreground hover:opacity-80"
-              >
-                Hjem
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNav("/oppskrifter")}
-                className="text-primary-foreground hover:opacity-80"
-              >
-                Oppskrifter
-              </button>
-            </li>
-            {isAdmin && (
-              <li>
-                <button
-                  onClick={() => handleNav("/admin/")}
-                  className="text-primary-foreground hover:opacity-80"
-                >
-                  Admin Panel
-                </button>
-              </li>
-            )}
-            <li>
-              {session ? (
-                <button
-                  onClick={handleSignOut}
-                  className="text-primary-foreground hover:opacity-80"
-                >
-                  Logg ut
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleNav("/signin")}
-                  className="text-primary-foreground hover:opacity-80"
-                >
-                  Logg inn
-                </button>
+        {/* Desktop nav */}
+        <div className="hidden md:flex self-stretch cursor-pointer">
+          <NavigationMenu className="h-full items-stretch">
+            <NavigationMenuList className="h-full items-stretch space-x-0">
+              <NavigationMenuItem className="h-full">
+                <NavigationMenuLink className={linkClass} onClick={() => handleNav("/")}>
+                  Hjem
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem className="h-full">
+                <NavigationMenuLink className={linkClass} onClick={() => handleNav("/oppskrifter")}>
+                  Oppskrifter
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              {isAdmin && (
+                <NavigationMenuItem className="h-full">
+                  <NavigationMenuLink className={linkClass} onClick={() => handleNav("/admin/")}>
+                    Admin Panel
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
               )}
-            </li>
-          </ul>
+              <NavigationMenuItem className="h-full">
+                {session ? (
+                  <NavigationMenuLink className={linkClass} onClick={handleSignOut}>
+                    Logg ut
+                  </NavigationMenuLink>
+                ) : (
+                  <NavigationMenuLink className={linkClass} onClick={() => handleNav("/signin")}>
+                    Logg inn
+                  </NavigationMenuLink>
+                )}
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
       </div>
+
 
       {/* Mobile nav menu */}
       {menuOpen && (

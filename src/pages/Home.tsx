@@ -21,7 +21,7 @@ function Home() {
     });
 
     // Get only the 4 newest recipes sorted by created_at
-    const displayRecipes = data?.slice(0, 4) || [];
+    const displayRecipes = data?.slice(0, 6) || [];
 
     return (
         <div className='leading-none'>
@@ -32,7 +32,7 @@ function Home() {
             <div className='text-3xl text-center bg-brand-primary leading-none'>
             <div className='justify-center' id='recipes'>
                 <div className=' md:text-secondary-foreground p-4 md:p-8 pt-12'>
-                <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-8'>
+                <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-8'>
                 {displayRecipes.map((recipe) => (
                     <Link 
                     key={recipe.id} 
@@ -56,7 +56,7 @@ function Home() {
                         className="text-lg px-10 py-6 bg-brand-primary-foreground text-brand-primary hover:bg-brand-background transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
                         onClick={() => navigate('/oppskrifter')}
                     >
-                        Se alle oppskrifter →
+                        Se flere oppskrifter →
                     </Button>
                 </div>
                 </div>
