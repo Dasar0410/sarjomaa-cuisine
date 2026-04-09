@@ -39,11 +39,9 @@ function Home() {
                     to={`/oppskrifter/${recipe.slug}`}
                     className="block h-full"
                     >
-                    <div className="h-full">
                     <Skeleton name="recipe-card" loading={isLoading}>
                     <RecipeCard recipe={recipe} />
                     </Skeleton>
-                    </div>
                     </Link>
                 ))}
                 </div>
