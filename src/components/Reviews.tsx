@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { UserAuth } from '@/context/AuthContext'
 import { Review } from '../types/review'
 import { addReview, updateReview, deleteReview } from '../api/review'
