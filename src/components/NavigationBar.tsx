@@ -30,6 +30,9 @@ function NavigationBar() {
   };
 
   const handleNav = (path: string) => {
+    if (path === '/signin') {
+      sessionStorage.setItem('redirectAfterLogin', pathname);
+    }
     navigate(path);
     setMenuOpen(false);
   };

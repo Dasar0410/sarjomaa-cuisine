@@ -53,7 +53,9 @@ export function SigninForm({ ...props }: React.ComponentProps<typeof Card>) {
 
             if (result.success){
                 console.log("Sign in successfull!", result.data)
-                navigate('/')
+                const redirect = sessionStorage.getItem('redirectAfterLogin') || '/'
+                sessionStorage.removeItem('redirectAfterLogin')
+                navigate(redirect)
             } else if (result.error) {
                 setServerError(result.error)
             }

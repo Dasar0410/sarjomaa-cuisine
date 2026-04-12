@@ -1,5 +1,5 @@
 import './App.css'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
 function ScrollToTop() {
@@ -23,8 +23,19 @@ import CookieConsentBanner from './components/CookieConsentBanner'
 
 function App() {
   const { session } = UserAuth();
+  const navigate = useNavigate();
   const userId = session?.user.id;
   const isAdmin =  userId === import.meta.env.VITE_ADMIN_USER_ID;
+
+  useEffect(() => {
+    if (session) {
+      const redirect = sessionStorage.getItem('redirectAfterLogin')
+      if (redirect) {
+        sessionStorage.removeItem('redirectAfterLogin')
+        navigate(redirect)
+      }
+    }
+  }, [session])
 
   return (
     <>
