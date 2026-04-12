@@ -1,30 +1,7 @@
-import { useState } from "react"
-import { UserAuth } from "../context/AuthContext"
-import { useNavigate } from 'react-router-dom'
 import NavigationBar from "@/components/NavigationBar"
 import { SigninForm } from "@/components/SigninForm"
 
 function Signin() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const { signIn } = UserAuth()
-    const navigate = useNavigate()
-
-    const handleSignIn = async (e: React.FormEvent) => {
-        e.preventDefault()
-        try {
-            const result = await signIn(email, password)
-
-            if (result.success){
-                console.log("Sign in successfull!", result.data)
-                navigate('/')
-            }
-        } catch (error) {
-            console.error("Unexpected error during sign in:", error)
-        } finally {
-        }
-    }
-
     return(
     <div>
         <NavigationBar />
@@ -33,15 +10,6 @@ function Signin() {
                         <SigninForm />
                     </div>
                 </div>
-
-        <form onSubmit={handleSignIn}>
-            <h2>Sign in!</h2>
-            <div>
-                <input placeholder='Email' type="email" name='email' onChange={(e) => setEmail(e.target.value)}></input>
-                <input placeholder='Password' type="password" name='password' onChange={(e) => setPassword(e.target.value)}></input>
-                <button type='submit'>Sign In!</button>
-            </div>
-        </form>
     </div>
     )
 }

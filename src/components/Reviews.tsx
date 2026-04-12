@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { UserAuth } from '@/context/AuthContext'
 import { Review } from '../types/review'
 import { addReview, updateReview, deleteReview } from '../api/review'
@@ -16,6 +16,8 @@ interface ReviewsProps {
 
 function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
   const { session } = UserAuth()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
   const queryClient = useQueryClient()
 
   const [rating, setRating] = useState(userReview?.rating ?? 0)
@@ -87,7 +89,10 @@ function Reviews({ recipeId, reviews, userReview }: ReviewsProps) {
 
       {!session ? (
         <p className='text-gray-600 mb-6'>
-          <Link to='/signin' className='underline font-medium'>Logg inn</Link> for å legge igjen en anmeldelse.
+          <button
+            className='underline font-medium'
+            onClick={() => { sessionStorage.setItem('redirectAfterLogin', pathname); navigate('/signin'); }}
+          >Logg inn</button> for å legge igjen en anmeldelse.
         </p>
       ) : (
         <div className='mb-6'>

@@ -12,7 +12,7 @@ const getSpiceLevel = (spiceLevel: string) => {
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
-    <div className="bg-white w-full h-full rounded-2xl overflow-hidden shadow-md border border-brand-border/30 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group flex flex-col">
+    <div className="bg-white w-full rounded-2xl overflow-hidden shadow-md border border-brand-border/30 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group flex flex-col">
       <div className="relative overflow-hidden aspect-[4/3] flex-shrink-0">
         <img 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
@@ -34,7 +34,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         </div>
 
         {recipe.tags && recipe.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <div className="hidden md:flex flex-wrap gap-1.5 mb-3">
             {recipe.tags.map(tag => (
               <span 
                 key={tag.id} 

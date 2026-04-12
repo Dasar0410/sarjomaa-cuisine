@@ -29,15 +29,15 @@ function Home() {
             <LandingPage />
             {/* make card under clickable and lead to the recipepage containing info on the recipe clicked  */}
 
-            <div className='text-3xl text-center bg-brand-primary leading-none'>
+            <div className=' bg-brand-primary'>
             <div className='justify-center' id='recipes'>
-                <div className=' md:text-secondary-foreground p-4 md:p-8 pt-12'>
-                <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-8'>
+                <div className='md:text-secondary-foreground p-4 md:p-8 pt-12 max-w-7xl mx-auto'>
+                <div className='columns-2 md:columns-2 xl:columns-3'>
                 {displayRecipes.map((recipe) => (
-                    <Link 
-                    key={recipe.id} 
+                    <Link
+                    key={recipe.id}
                     to={`/oppskrifter/${recipe.slug}`}
-                    className="block h-full"
+                    className="block break-inside-avoid mb-4 md:mb-6"
                     >
                     <Skeleton name="recipe-card" loading={isLoading}>
                     <RecipeCard recipe={recipe} />
@@ -47,11 +47,11 @@ function Home() {
                 </div>
 
                 {/* Se alle oppskrifter button */}
-                <div className="mt-12 mb-16">
+                <div className="mt-12 mb-16 flex justify-center">
                     <Button 
                         variant="secondary" 
                         size="lg" 
-                        className="text-lg px-10 py-6 bg-brand-primary-foreground text-brand-primary hover:bg-brand-background transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                        className="text-lg align px-10 py-6 bg-brand-primary-foreground text-brand-primary hover:bg-brand-background transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
                         onClick={() => navigate('/oppskrifter')}
                     >
                         Se flere oppskrifter →
