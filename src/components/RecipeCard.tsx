@@ -22,9 +22,12 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       <div className="px-3 py-3 md:px-6 md:py-5 flex flex-col flex-grow"> 
-      {recipe.avg_rating !== undefined && (
-        <div className="flex">
-          <StarRating value={recipe.avg_rating} size={16} />
+      {recipe.avg_rating !== undefined && recipe.review_count !== undefined && recipe.review_count > 0 && (
+        <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center">
+            <StarRating value={recipe.avg_rating} size={16} />
+          </div>
+          <span className="text-gray-600 text-sm leading-none">{recipe.avg_rating.toFixed(1)} ({recipe.review_count})</span>
         </div>
       )}
         <div className="flex items-center gap-2 mb-2 md:mb-3">
