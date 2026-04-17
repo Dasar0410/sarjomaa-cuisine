@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import { Link } from 'react-router-dom';
@@ -21,7 +22,16 @@ function AllRecipes() {
     };
 
     return (
-        <div> 
+        <div>
+            <Helmet>
+                <title>Alle oppskrifter — SarjoMat</title>
+                <meta name="description" content="Utforsk alle oppskrifter på SarjoMat. Søk og filtrer blant enkle og gode middagsretter." />
+                <meta property="og:title" content="Alle oppskrifter — SarjoMat" />
+                <meta property="og:description" content="Utforsk alle oppskrifter på SarjoMat. Søk og filtrer blant enkle og gode middagsretter." />
+                <meta property="og:image" content="https://sarjomat.no/sarjomat.png" />
+                <meta property="og:url" content="https://sarjomat.no/oppskrifter" />
+                <link rel="canonical" href="https://sarjomat.no/oppskrifter" />
+            </Helmet>
             <NavigationBar />
             <FilterSearch onSearchChange={onSearchChange} />
             <div className='card-container columns-2 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-3 2xl:columns-3  gap-4 md:gap-6 px-4 py-4 space-y-4 max-w-7xl mx-auto'>

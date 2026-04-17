@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import NavigationBar from '../components/NavigationBar';
 import RecipeCard from '../components/RecipeCard';
 import LandingPage from '../components/LandingPage';
@@ -25,6 +26,15 @@ function Home() {
 
     return (
         <div className='leading-none'>
+            <Helmet>
+                <title>SarjoMat - Enkle og gode oppskrifter</title>
+                <meta name="description" content="Finn enkle og gode oppskrifter på SarjoMat. Lag deilig middag med trinnvise oppskrifter." />
+                <meta property="og:title" content="SarjoMat - Enkle og gode oppskrifter" />
+                <meta property="og:description" content="Finn enkle og gode oppskrifter på SarjoMat. Lag deilig middag med trinnvise oppskrifter." />
+                <meta property="og:image" content="https://sarjomat.no/sarjomat.png" />
+                <meta property="og:url" content="https://sarjomat.no" />
+                <link rel="canonical" href="https://sarjomat.no" />
+            </Helmet>
             <NavigationBar />
             <LandingPage />
             {/* make card under clickable and lead to the recipepage containing info on the recipe clicked  */}
