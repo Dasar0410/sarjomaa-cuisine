@@ -5,6 +5,9 @@ import TitleInstructionCards from '../components/TitleInstructionCard'
 import IngredientsCard from '../components/IngredientsCard'
 import NutritionCard from '../components/NutritionCard'
 import Reviews from '../components/Reviews'
+import TitleInstructionCardSkeleton from '../skeletons/TitleInstructionCardSkeleton'
+import IngredientsCardSkeleton from '../skeletons/IngredientsCardSkeleton'
+import NutritionCardSkeleton from '../skeletons/NutritionCardSkeleton'
 import { getRecipeBySlug } from '../api/api'
 import { getReviewsByRecipeId } from '../api/review'
 import { useQuery } from '@tanstack/react-query'
@@ -15,7 +18,7 @@ function RecipePages() {
     const { slug } = useParams<{ slug: string }>()
     const { session } = UserAuth()
 
-    const { data: recipeData} = useQuery({
+    const { data: recipeData, isLoading} = useQuery({
         queryKey: ['recipe', slug],
         queryFn: () => getRecipeBySlug(slug!),
     })
@@ -99,14 +102,17 @@ function RecipePages() {
             
             <div className='flex flex-col md:flex-row md:flex-wrap md:justify-center'>
                 <div className='w-full flex justify-center'>
-                    {recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-4 md:mb-10 md:my-10 md:w-2/4 object-cover'/>}
+                    {isLoading
+                        ? <div className='mb-4 md:mb-10 md:my-10 w-full md:w-2/5 aspect-[4/3] bg-gray-300 animate-pulse rounded-2xl' />
+                        : recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-4 md:mb-10 md:my-10 md:w-2/5 object-cover rounded-2xl'/>
+                    }
                 </div>
 
                 {/* On mobile: contents dissolves this wrapper so children can be ordered freely */}
                 {/* On desktop: restored as the original left column */}
                 <div className='contents md:flex md:flex-col md:w-1/2'>
                     <div className='order-1 md:order-none'>
-                        {recipeData && <TitleInstructionCards recipe={recipeData} avgRating={avgRating} reviewCount={reviews.length} />}
+                        {isLoading ? <TitleInstructionCardSkeleton /> : recipeData && <TitleInstructionCards recipe={recipeData} avgRating={avgRating} reviewCount={reviews.length} />}
                     </div>
                     <div className='order-last md:order-none'>
                         {recipeData && <Reviews recipeId={recipeData.id!} reviews={reviews} userReview={userReview} />}
@@ -115,8 +121,8 @@ function RecipePages() {
 
                 {/* Right column */}
                 <div className='order-2 md:order-none flex flex-col'>
-                    {recipeData && <IngredientsCard recipe={recipeData} portions={portions} setPortions={setPortions} />}
-                    {recipeData && <NutritionCard recipe={recipeData} portions={portions} />}
+                    {isLoading ? <IngredientsCardSkeleton /> : recipeData && <IngredientsCard recipe={recipeData} portions={portions} setPortions={setPortions} />}
+                    {isLoading ? <NutritionCardSkeleton /> : recipeData && <NutritionCard recipe={recipeData} portions={portions} />}
                 </div>
             </div>
         </>
