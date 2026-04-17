@@ -103,8 +103,8 @@ function RecipePages() {
             <div className='flex flex-col md:flex-row md:flex-wrap md:justify-center'>
                 <div className='w-full flex justify-center'>
                     {isLoading
-                        ? <div className='mb-4 md:mb-10 md:my-10 md:w-2/4 aspect-[16/9] bg-gray-300 animate-pulse' />
-                        : recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-4 md:mb-10 md:my-10 md:w-1/2 object-cover'/>
+                        ? <div className='mb-4 md:mb-10 md:my-10 md:w-2/5 aspect-[16/9] bg-gray-300 animate-pulse rounded-2xl' />
+                        : recipeData && <img src={recipeData.image_url} alt={recipeData.title} className='mb-4 md:mb-10 md:my-10 md:w-2/5 object-cover rounded-2xl'/>
                     }
                 </div>
 
