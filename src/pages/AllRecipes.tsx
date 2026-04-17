@@ -6,7 +6,7 @@ import NavigationBar from '../components/NavigationBar'
 import FilterSearch from '../components/FilterSearch';
 import { searchRecipes } from '../api/api';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { Skeleton } from 'boneyard-js/react';
+import RecipeCardSkeleton from '../skeletons/RecipeCardSkeleton';
 
 function AllRecipes() {
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -35,17 +35,22 @@ function AllRecipes() {
             <NavigationBar />
             <FilterSearch onSearchChange={onSearchChange} />
             <div className='card-container columns-2 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-3 2xl:columns-3  gap-4 md:gap-6 px-4 py-4 space-y-4 max-w-7xl mx-auto'>
-            {recipes.map((recipe) => (
-                <Link 
-                key={recipe.id} 
-                to={`/oppskrifter/${recipe.slug}`}
-                className="block mb-4 md:mb-6 break-inside-avoid"
-                >
-                <Skeleton name="recipe-card" loading={isLoading}>
-                <RecipeCard recipe={recipe} />
-                </Skeleton>
-                </Link>
-            ))}
+            {isLoading && recipes.length === 0
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="block mb-4 md:mb-6 break-inside-avoid">
+                        <RecipeCardSkeleton />
+                    </div>
+                ))
+                : recipes.map((recipe) => (
+                    <Link
+                        key={recipe.id}
+                        to={`/oppskrifter/${recipe.slug}`}
+                        className="block mb-4 md:mb-6 break-inside-avoid"
+                    >
+                        <RecipeCard recipe={recipe} />
+                    </Link>
+                ))
+            }
             </div>
         
         </div>

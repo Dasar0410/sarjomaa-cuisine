@@ -28,7 +28,7 @@ function RecipeCardSkeleton() {
           <div className="flex items-center gap-2">
             <div className="h-7 w-16 md:w-20 bg-gray-200 rounded-full" />
             <div className="h-7 w-14 md:w-18 bg-gray-200 rounded-full" />
-            <div className="h-7 w-18 md:w-22 bg-gray-200 rounded-full" />
+            <div className="h-7 w-20 md:w-24 bg-gray-200 rounded-full" />
           </div>
         </div>
       </div>
