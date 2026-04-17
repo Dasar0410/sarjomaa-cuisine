@@ -5,7 +5,7 @@ import LandingPage from '../components/LandingPage';
 import { Link, useNavigate } from 'react-router-dom';
 import { searchRecipes } from '../api/api';
 import { Button } from '../components/ui/button';
-import { Skeleton } from 'boneyard-js/react'
+import RecipeCardSkeleton from '../skeletons/RecipeCardSkeleton';
 import { useState } from 'react';
 import {
     useQuery
@@ -43,17 +43,22 @@ function Home() {
             <div className='justify-center' id='recipes'>
                 <div className='md:text-secondary-foreground p-4 md:p-8 pt-12 max-w-7xl mx-auto'>
                 <div className='columns-2 md:columns-2 xl:columns-3'>
-                {displayRecipes.map((recipe) => (
-                    <Link
-                    key={recipe.id}
-                    to={`/oppskrifter/${recipe.slug}`}
-                    className="block break-inside-avoid mb-4 md:mb-6"
-                    >
-                    <Skeleton name="recipe-card" loading={isLoading}>
-                    <RecipeCard recipe={recipe} />
-                    </Skeleton>
-                    </Link>
-                ))}
+                {isLoading
+                  ? [...Array(6)].map((_, i) => (
+                      <div key={i} className="break-inside-avoid mb-4 md:mb-6">
+                        <RecipeCardSkeleton />
+                      </div>
+                    ))
+                  : displayRecipes.map((recipe) => (
+                      <Link
+                        key={recipe.id}
+                        to={`/oppskrifter/${recipe.slug}`}
+                        className="block break-inside-avoid mb-4 md:mb-6"
+                      >
+                        <RecipeCard recipe={recipe} />
+                      </Link>
+                    ))
+                }
                 </div>
 
                 {/* Se alle oppskrifter button */}
