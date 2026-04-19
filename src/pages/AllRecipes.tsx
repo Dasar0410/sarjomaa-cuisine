@@ -34,7 +34,7 @@ function AllRecipes() {
             </Helmet>
             <NavigationBar />
             <FilterSearch onSearchChange={onSearchChange} />
-            <div className='card-container columns-2 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-3 2xl:columns-3  gap-4 md:gap-6 px-4 py-4 space-y-4 max-w-7xl mx-auto'>
+            <div className='card-container columns-1 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-3 2xl:columns-3  gap-4 md:gap-6 px-4 py-4 space-y-4 max-w-7xl mx-auto'>
             {isLoading && recipes.length === 0
                 ? Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="block mb-4 md:mb-6 break-inside-avoid">
