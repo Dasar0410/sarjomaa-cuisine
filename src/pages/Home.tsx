@@ -42,7 +42,7 @@ function Home() {
             <div className=' bg-brand-primary'>
             <div className='justify-center' id='recipes'>
                 <div className='md:text-secondary-foreground p-4 md:p-8 pt-12 max-w-7xl mx-auto'>
-                <div className='columns-2 md:columns-2 xl:columns-3'>
+                <div className='columns-1 md:columns-2 xl:columns-3'>
                 {isLoading
                   ? [...Array(6)].map((_, i) => (
                       <div key={i} className="break-inside-avoid mb-4 md:mb-6">
