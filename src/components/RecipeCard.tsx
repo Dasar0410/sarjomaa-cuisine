@@ -8,6 +8,18 @@ const getSpiceLevel = (spiceLevel: string) => {
   if (level === 'medium') return '🌶️';
   if (level === 'spicy') return '🌶️🌶️';
   return '';
+
+
+};
+
+const getTime = (cookTime: number) => {
+  if (cookTime < 60) {
+    return `${cookTime} min`;
+  } else {
+    const hours = Math.floor(cookTime / 60);
+    const minutes = cookTime % 60;
+    return minutes > 0 ? `${hours} t ${minutes} min` : `${hours} t`;
+  }
 };
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
@@ -51,13 +63,13 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         <div className="flex items-center justify-between pt-2 border-t border-brand-border/20 mt-auto">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="inline-flex items-center bg-brand-secondary/60 text-brand-foreground rounded-full px-2 py-1 md:px-4 md:py-1.5 text-xs md:text-sm font-semibold capitalize">
-              {recipe.cuisine}
+            {recipe.meal_type}
             </span>
-            <span className="inline-flex items-center bg-brand-secondary/40 text-brand-foreground rounded-full px-2 py-1 md:px-4 md:py-1.5 text-xs md:text-sm font-semibold capitalize">
-               {recipe.meal_type}
+            <span className="inline-flex items-center bg-brand-secondary/40 text-brand-foreground rounded-full px-2 py-1 md:px-4 md:py-1.5 text-xs md:text-sm font-semibold ">
+            {getTime(recipe.cook_time)}
             </span>
-            <span className="inline-flex items-center bg-brand-secondary/20 text-brand-foreground rounded-full px-2 py-1 md:px-4 md:py-1.5 text-xs md:text-sm font-semibold">
-              &lt; {recipe.cook_time} min
+            <span className="inline-flex items-center bg-brand-secondary/20 text-brand-foreground rounded-full px-2 py-1 md:px-4 md:py-1.5 text-xs md:text-sm font-semibold capitalize">  
+            {recipe.cuisine} 
             </span>
           </div>
           <svg 
