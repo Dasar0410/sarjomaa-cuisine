@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-background: 69 49% 89%;
+    --brand-foreground: 106 16% 27%;
+    --brand-primary: 126 23% 49%;
+    --brand-primary-foreground: 69 49% 89%;
+    --brand-secondary: 100 30% 65%;
+    --brand-secondary-foreground: 106 16% 27%;
+    --brand-accent: 106 16% 27%;
+    --brand-accent-foreground: 69 49% 89%;
+    --brand-border: 100 30% 75%;
+    --brand-input: 100 30% 75%;
+    --brand-ring: 126 23% 49%;
+
+    --background: var(--brand-background);
+    --foreground: var(--brand-foreground);
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: var(--brand-primary);
+    --primary-foreground: var(--brand-primary-foreground);
+    --secondary: var(--brand-secondary);
+    --secondary-foreground: var(--brand-secondary-foreground);
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: var(--brand-accent);
+    --accent-foreground: var(--brand-accent-foreground);
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: var(--brand-border);
+    --input: var(--brand-input);
+    --ring: var(--brand-ring);
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Nunito', sans-serif;
+    font-optical-sizing: auto;
+    min-height: 100vh;
+  }
+}
+
+.recipePageImage {
+  width: 75vw;
+  height: 42vw;
+  margin-left: 12.5vw;
+  margin-right: 12.5vw;
+  margin-top: 2rem;
+}
+
+.bg-nav {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+input[type="checkbox"]:checked {
+  background-color: #4CAF50;
+  border: 1px solid #4CAF50;
+}

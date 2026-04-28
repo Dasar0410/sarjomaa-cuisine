@@ -3,6 +3,7 @@ import { Recipe } from '../types/recipe';
 import { UserAuth } from '@/context/AuthContext';
 import { Edit } from 'lucide-react';
 import { highlightIngredients } from '@/lib/highlightIngredients';
+import { getEnv } from '@/lib/env';
 import StarRating from './StarRating';
 
 interface TitleInstructionCardsProps {
@@ -13,7 +14,7 @@ interface TitleInstructionCardsProps {
 
 function TitleInstructionCards({ recipe, avgRating, reviewCount }: TitleInstructionCardsProps){
 
-const isAdmin = UserAuth().session?.user.id === import.meta.env.VITE_ADMIN_USER_ID;
+const isAdmin = UserAuth().session?.user.id === getEnv('VITE_ADMIN_USER_ID', 'NEXT_PUBLIC_ADMIN_USER_ID');
 
 const ingredientNames = useMemo(
     () => recipe.ingredients.map(i => i.name).filter(name => name.length >= 3),
